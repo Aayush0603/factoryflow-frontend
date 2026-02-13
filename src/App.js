@@ -29,8 +29,6 @@ import HistoryIcon from "@mui/icons-material/History";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import InsightsIcon from "@mui/icons-material/Insights";
 
-/* ================= MAIN APP ================= */
-
 function App() {
   const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
@@ -61,7 +59,7 @@ function App() {
             element={
               <div style={layoutWrapper}>
                 
-                {/* Overlay */}
+                {/* Overlay (Mobile Only) */}
                 {isMobile && mobileOpen && (
                   <div
                     onClick={() => setMobileOpen(false)}
@@ -93,7 +91,7 @@ function App() {
 
                   {!collapsed && (
                     <>
-                      <h2>FactoryFlow</h2>
+                      <h2 style={{ marginBottom: "5px" }}>FactoryFlow</h2>
                       <div style={userBox}>
                         Welcome, <b>{user?.username}</b>
                         <br />
@@ -136,8 +134,6 @@ function App() {
                 {/* Main Content */}
                 <AnimatedPage dark={dark}>
                   <div style={main}>
-                    
-                    {/* Header */}
                     <div style={topHeader}>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         {isMobile && (
@@ -148,7 +144,6 @@ function App() {
                             ☰
                           </button>
                         )}
-
                         <div>
                           <h3 style={{ margin: 0 }}>
                             Welcome back, {user?.username} 👋
@@ -193,6 +188,46 @@ function App() {
   );
 }
 
+/* ================= NAV ITEM ================= */
+
+function NavItem({ to, label, icon, collapsed, setMobileOpen }) {
+  const location = useLocation();
+  const isActive = location.pathname === to;
+
+  return (
+    <Link
+      to={to}
+      onClick={() => setMobileOpen(false)}
+      style={{
+        ...navItem,
+        background: isActive ? "#334155" : "transparent"
+      }}
+    >
+      <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {icon}
+        {!collapsed && label}
+      </span>
+    </Link>
+  );
+}
+
+/* ================= ANIMATED WRAPPER ================= */
+
+function AnimatedPage({ children, dark }) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        minHeight: "100vh",
+        background: dark ? "#0f172a" : "#f4f6f9",
+        transition: "all 0.3s ease"
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* ================= STYLES ================= */
 
 const layoutWrapper = {
@@ -214,7 +249,6 @@ const overlay = {
 
 const sidebar = {
   background: "linear-gradient(180deg, #111827, #0f172a)",
-  boxShadow: "4px 0 20px rgba(0,0,0,0.3)",
   padding: "20px",
   display: "flex",
   flexDirection: "column",
@@ -240,13 +274,7 @@ const topHeader = {
   justifyContent: "space-between",
   alignItems: "center",
   flexWrap: "wrap",
-  gap: "10px",
-  boxShadow: "0 6px 20px rgba(0,0,0,0.05)"
-};
-
-const subText = {
-  color: "#64748b",
-  fontSize: "13px"
+  gap: "10px"
 };
 
 const hamburgerBtn = {
@@ -254,6 +282,11 @@ const hamburgerBtn = {
   border: "none",
   fontSize: "22px",
   cursor: "pointer"
+};
+
+const subText = {
+  color: "#64748b",
+  fontSize: "13px"
 };
 
 const navItem = {
