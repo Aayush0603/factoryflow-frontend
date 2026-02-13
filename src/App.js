@@ -59,30 +59,17 @@ function App() {
           <Route
             path="*"
             element={
-              <div
-                style={{
-                  display: "flex",
-                  minHeight: "100vh",
-                  position: "relative"
-                }}
-              >
-                {/* ================= SIDEBAR ================= */}
-
+              <div style={layoutWrapper}>
+                
+                {/* Overlay */}
                 {isMobile && mobileOpen && (
                   <div
                     onClick={() => setMobileOpen(false)}
-                    style={{
-                      position: "fixed",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      background: "rgba(0,0,0,0.4)",
-                      zIndex: 999
-                    }}
+                    style={overlay}
                   />
                 )}
 
+                {/* Sidebar */}
                 <div
                   style={{
                     ...sidebar,
@@ -92,13 +79,9 @@ function App() {
                         ? "0"
                         : "-240px"
                       : "0",
-                    top: 0,
-                    height: "100%",
-                    zIndex: 1000,
                     width: collapsed ? "80px" : "240px"
                   }}
                 >
-                  {/* Toggle Collapse (Desktop only) */}
                   {!isMobile && (
                     <button
                       onClick={() => setCollapsed(!collapsed)}
@@ -110,15 +93,12 @@ function App() {
 
                   {!collapsed && (
                     <>
-                      <h2 style={{ marginBottom: "5px" }}>FactoryFlow</h2>
-
+                      <h2>FactoryFlow</h2>
                       <div style={userBox}>
                         Welcome, <b>{user?.username}</b>
                         <br />
                         Role:
-                        <span style={roleBadge}>
-                          {user?.role}
-                        </span>
+                        <span style={roleBadge}>{user?.role}</span>
                       </div>
                     </>
                   )}
@@ -153,23 +133,17 @@ function App() {
                   </button>
                 </div>
 
-                {/* ================= MAIN CONTENT ================= */}
-
+                {/* Main Content */}
                 <AnimatedPage dark={dark}>
                   <div style={main}>
-                    {/* Top Header */}
+                    
+                    {/* Header */}
                     <div style={topHeader}>
-                      <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         {isMobile && (
                           <button
                             onClick={() => setMobileOpen(!mobileOpen)}
-                            style={{
-                              background: "transparent",
-                              border: "none",
-                              fontSize: "22px",
-                              marginRight: "10px",
-                              cursor: "pointer"
-                            }}
+                            style={hamburgerBtn}
                           >
                             ☰
                           </button>
@@ -179,7 +153,7 @@ function App() {
                           <h3 style={{ margin: 0 }}>
                             Welcome back, {user?.username} 👋
                           </h3>
-                          <span style={{ color: "#64748b", fontSize: "13px" }}>
+                          <span style={subText}>
                             Here’s what’s happening in your factory today.
                           </span>
                         </div>
@@ -219,47 +193,24 @@ function App() {
   );
 }
 
-/* ================= NAV ITEM ================= */
-
-function NavItem({ to, label, icon, collapsed, setMobileOpen }) {
-  const location = useLocation();
-  const isActive = location.pathname === to;
-
-  return (
-    <Link
-      to={to}
-      onClick={() => setMobileOpen(false)}
-      style={{
-        ...navItem,
-        background: isActive ? "#334155" : "transparent"
-      }}
-    >
-      <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {icon}
-        {!collapsed && label}
-      </span>
-    </Link>
-  );
-}
-
-/* ================= ANIMATED WRAPPER ================= */
-
-function AnimatedPage({ children, dark }) {
-  return (
-    <div
-      style={{
-        width: "100%",
-        minHeight: "100vh",
-        background: dark ? "#0f172a" : "#f4f6f9",
-        transition: "all 0.3s ease"
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 /* ================= STYLES ================= */
+
+const layoutWrapper = {
+  display: "flex",
+  minHeight: "100vh",
+  position: "relative",
+  overflowX: "hidden"
+};
+
+const overlay = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  background: "rgba(0,0,0,0.4)",
+  zIndex: 999
+};
 
 const sidebar = {
   background: "linear-gradient(180deg, #111827, #0f172a)",
@@ -269,7 +220,40 @@ const sidebar = {
   flexDirection: "column",
   gap: "14px",
   color: "white",
-  transition: "all 0.3s ease"
+  transition: "all 0.3s ease",
+  height: "100vh",
+  zIndex: 1000
+};
+
+const main = {
+  flex: 1,
+  padding: "20px",
+  boxSizing: "border-box"
+};
+
+const topHeader = {
+  background: "white",
+  padding: "16px 20px",
+  borderRadius: "14px",
+  marginBottom: "20px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  flexWrap: "wrap",
+  gap: "10px",
+  boxShadow: "0 6px 20px rgba(0,0,0,0.05)"
+};
+
+const subText = {
+  color: "#64748b",
+  fontSize: "13px"
+};
+
+const hamburgerBtn = {
+  background: "transparent",
+  border: "none",
+  fontSize: "22px",
+  cursor: "pointer"
 };
 
 const navItem = {
@@ -277,8 +261,7 @@ const navItem = {
   textDecoration: "none",
   padding: "10px 12px",
   borderRadius: "10px",
-  fontSize: "15px",
-  transition: "all 0.2s ease"
+  fontSize: "15px"
 };
 
 const toggleBtn = {
@@ -309,11 +292,6 @@ const themeBtn = {
   cursor: "pointer"
 };
 
-const main = {
-  padding: "20px",
-  width: "100%"
-};
-
 const userBox = {
   fontSize: "13px",
   marginBottom: "15px"
@@ -333,17 +311,6 @@ const roleBadgeHeader = {
   padding: "6px 14px",
   borderRadius: "20px",
   fontSize: "12px"
-};
-
-const topHeader = {
-  background: "white",
-  padding: "16px 20px",
-  borderRadius: "14px",
-  marginBottom: "20px",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  boxShadow: "0 6px 20px rgba(0,0,0,0.05)"
 };
 
 export default App;

@@ -70,19 +70,28 @@ function Dashboard({ dark }) {
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      x: { ticks: { color: dark ? "white" : "black" } },
-      y: { ticks: { color: dark ? "white" : "black" } }
+      x: { ticks: { color: dark ? "white" : "#111" } },
+      y: { ticks: { color: dark ? "white" : "#111" } }
     }
   };
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ py: { xs: 3, md: 5 } }}>
-        
+    <Container
+      maxWidth="lg"
+      sx={{
+        px: { xs: 2, sm: 3, md: 4 } // clean side padding
+      }}
+    >
+      <Box
+        sx={{
+          py: { xs: 3, md: 5 },
+          width: "100%"
+        }}
+      >
         {/* ===== PAGE TITLE ===== */}
         <Typography
           sx={{
-            fontSize: { xs: "1.6rem", md: "2rem" },
+            fontSize: { xs: "1.4rem", md: "2rem" },
             fontWeight: "bold",
             mb: { xs: 3, md: 4 },
             letterSpacing: "0.5px"
@@ -95,6 +104,7 @@ function Dashboard({ dark }) {
         <Grid
           container
           spacing={{ xs: 2, md: 3 }}
+          justifyContent="center"
           sx={{ mb: { xs: 3, md: 4 } }}
         >
           <StatCard
@@ -121,18 +131,14 @@ function Dashboard({ dark }) {
         <Card
           sx={{
             p: { xs: 2, md: 4 },
-            borderRadius: 4,
-            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-            transition: "all 0.3s ease",
-            "&:hover": {
-              transform: "translateY(-4px)",
-              boxShadow: "0 18px 40px rgba(0,0,0,0.12)"
-            }
+            borderRadius: 3,
+            boxShadow: "0 8px 25px rgba(0,0,0,0.06)",
+            width: "100%"
           }}
         >
           <Typography
             sx={{
-              fontSize: { xs: "1rem", md: "1.2rem" },
+              fontSize: { xs: "0.95rem", md: "1.2rem" },
               fontWeight: 600,
               mb: { xs: 2, md: 3 }
             }}
@@ -143,7 +149,7 @@ function Dashboard({ dark }) {
           <Box
             sx={{
               width: "100%",
-              height: { xs: 250, md: 400 }
+              height: { xs: 240, md: 380 }
             }}
           >
             <Bar data={chartData} options={chartOptions} />
@@ -160,21 +166,16 @@ const StatCard = ({ title, value, color, loading }) => (
   <Grid item xs={12} sm={6} md={4}>
     <Card
       sx={{
-        borderLeft: `6px solid ${color}`,
-        borderRadius: 4,
-        boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
-        transition: "all 0.3s ease",
-        cursor: "pointer",
-        "&:hover": {
-          transform: "translateY(-6px)",
-          boxShadow: "0 15px 35px rgba(0,0,0,0.15)"
-        }
+        borderLeft: `5px solid ${color}`,
+        borderRadius: 3,
+        boxShadow: "0 4px 15px rgba(0,0,0,0.06)",
+        width: "100%"
       }}
     >
       <CardContent>
         <Typography
           sx={{
-            fontSize: { xs: "0.85rem", md: "0.95rem" },
+            fontSize: { xs: "0.8rem", md: "0.95rem" },
             color: "#64748b",
             mb: 1
           }}
@@ -184,7 +185,7 @@ const StatCard = ({ title, value, color, loading }) => (
 
         <Typography
           sx={{
-            fontSize: { xs: "1.6rem", md: "2rem" },
+            fontSize: { xs: "1.5rem", md: "1.9rem" },
             fontWeight: "bold"
           }}
         >
