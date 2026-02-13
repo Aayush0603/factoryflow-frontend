@@ -59,9 +59,8 @@ function App() {
             element={
               <div
                 style={{
-                  display: isMobile ? "block" : "flex",
-                  minHeight: "100vh",
-                  position: "relative"
+                  display: "flex",
+                  minHeight: "100vh"
                 }}
               >
                 {/* Overlay */}
@@ -83,20 +82,26 @@ function App() {
                 {/* Sidebar */}
                 <div
                   style={{
-                    background:
-                      "linear-gradient(180deg, #111827, #0f172a)",
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "240px",
+                    height: "100vh",
+                    background: "linear-gradient(180deg, #111827, #0f172a)",
                     padding: "20px",
                     display: "flex",
                     flexDirection: "column",
                     gap: "14px",
                     color: "white",
-                    transition: "all 0.3s ease",
-                    position: isMobile ? "fixed" : "relative",
-                    left:
-                      isMobile && !mobileOpen ? "-240px" : "0",
-                    width: collapsed ? "80px" : "240px",
-                    minHeight: "100vh",
-                    zIndex: 1000
+                    zIndex: 1000,
+                    transform: isMobile
+                      ? mobileOpen
+                        ? "translateX(0)"
+                        : "translateX(-240px)"
+                      : collapsed
+                      ? "translateX(-160px)"
+                      : "translateX(0)",
+                    transition: "transform 0.3s ease"
                   }}
                 >
                   {!isMobile && (
@@ -151,7 +156,6 @@ function App() {
                     </>
                   )}
 
-                  {/* Dark Mode Toggle */}
                   <button
                     onClick={() => setDark(!dark)}
                     style={{
@@ -186,7 +190,18 @@ function App() {
                 </div>
 
                 {/* Main Content */}
-                <div style={{ flex: 1, padding: "16px" }}>
+                <div
+                  style={{
+                    flex: 1,
+                    padding: "16px",
+                    marginLeft: isMobile
+                      ? "0"
+                      : collapsed
+                      ? "80px"
+                      : "240px",
+                    transition: "margin 0.3s ease"
+                  }}
+                >
                   <Routes>
                     <Route path="/" element={<Dashboard dark={dark} />} />
                     <Route path="/workers" element={<Workers dark={dark} />} />
