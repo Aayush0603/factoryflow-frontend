@@ -12,12 +12,14 @@ import {
   Box
 } from "@mui/material";
 
+const API = process.env.REACT_APP_API_URL;
+
 function AttendanceHistory() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/attendance/history") // ✅ corrected
+      .get(`${API}/api/attendance/history`)
       .then(res => setData(res.data))
       .catch(console.error);
   }, []);

@@ -15,17 +15,24 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
+const API = process.env.REACT_APP_API_URL;
+
 function Salary() {
   const [month, setMonth] = useState("2026-01");
   const [data, setData] = useState([]);
 
   const fetchSalary = async () => {
-    const res = await axios.get(`http://localhost:5000/salary/${month}`);
-    setData(res.data);
+    try {
+      const res = await axios.get(`${API}/api/salary/${month}`);
+      setData(res.data);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to fetch salary data");
+    }
   };
 
   const downloadReport = () => {
-    window.open(`http://localhost:5000/salary-report/${month}`);
+    window.open(`${API}/api/salary-report/${month}`);
   };
 
   return (

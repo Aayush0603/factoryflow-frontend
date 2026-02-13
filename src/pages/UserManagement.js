@@ -4,16 +4,16 @@ import {
   Box,
   Typography,
   Card,
-  CardContent,
   TextField,
   Button,
-  MenuItem,
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody
 } from "@mui/material";
+
+const API = process.env.REACT_APP_API_URL;
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -24,21 +24,39 @@ function UserManagement() {
   });
 
   const fetchUsers = () => {
-    axios.get("http://localhost:5000/api/auth/users")
-      .then(res => setUsers(res.data));
+    axios
+      .get(`${API}/api/auth/users`)
+      .then(res => setUsers(res.data))
+      .catch(console.error);
   };
 
-  useEffect(fetchUsers, []);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const createUser = async () => {
-    await axios.post("http://localhost:5000/api/auth/create-supervisor", form);
-    setForm({ username: "", password: "", role: "supervisor" });
-    fetchUsers();
+    try {
+      await axios.post(
+        `${API}/api/auth/create-supervisor`,
+        form
+      );
+
+      setForm({ username: "", password: "", role: "supervisor" });
+      fetchUsers();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create user");
+    }
   };
 
   const deleteUser = async (id) => {
-    await axios.delete(`http://localhost:5000/api/auth/users/${id}`);
-    fetchUsers();
+    try {
+      await axios.delete(`${API}/api/auth/users/${id}`);
+      fetchUsers();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete user");
+    }
   };
 
   return (
@@ -47,7 +65,7 @@ function UserManagement() {
         User Management
       </Typography>
 
-      {/* Create User Card */}
+      {/* Create User */}
       <Card sx={{ mb: 4, p: 3, borderRadius: 3 }}>
         <Typography variant="h6" mb={2}>
           Create Supervisor
@@ -107,7 +125,6 @@ function UserManagement() {
             ))}
           </TableBody>
         </Table>
-
       </Card>
     </Box>
   );

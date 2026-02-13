@@ -13,6 +13,8 @@ import {
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
+const API = process.env.REACT_APP_API_URL;
+
 function Analytics({ dark }) {
   const [monthly, setMonthly] = useState({});
   const [topWorkers, setTopWorkers] = useState([]);
@@ -21,20 +23,22 @@ function Analytics({ dark }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/analytics/monthly-attendance")
-      .then(r => setMonthly(r.data));
+      .get(`${API}/api/analytics/monthly-attendance`)
+      .then(r => setMonthly(r.data))
+      .catch(console.error);
 
     axios
-      .get("http://localhost:5000/api/analytics/top-workers")
-      .then(r => setTopWorkers(r.data));
+      .get(`${API}/api/analytics/top-workers`)
+      .then(r => setTopWorkers(r.data))
+      .catch(console.error);
 
     axios
-      .get("http://localhost:5000/api/analytics/overtime-cost")
-      .then(r => setOtCost(r.data.totalOTPay));
+      .get(`${API}/api/analytics/overtime-cost`)
+      .then(r => setOtCost(r.data.totalOTPay))
+      .catch(console.error);
 
-    // remove this if backend route doesn't exist
     axios
-      .get("http://localhost:5000/api/analytics/absent-alert")
+      .get(`${API}/api/analytics/absent-alert`)
       .then(r => setAlerts(r.data))
       .catch(() => setAlerts([]));
   }, []);
@@ -106,8 +110,6 @@ function Analytics({ dark }) {
     </Box>
   );
 }
-
-/* 🎨 STYLE FUNCTIONS (THESE WERE MISSING) */
 
 const bigCard = (color) => ({
   background: color,

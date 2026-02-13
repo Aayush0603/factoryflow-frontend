@@ -19,6 +19,8 @@ ChartJS.register(
   Legend
 );
 
+const API = process.env.REACT_APP_API_URL;
+
 function Dashboard({ dark }) {
   const [stats, setStats] = useState({
     totalWorkers: 0,
@@ -28,7 +30,7 @@ function Dashboard({ dark }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/dashboard")
+      .get(`${API}/api/dashboard`)
       .then((res) => setStats(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -58,7 +60,6 @@ function Dashboard({ dark }) {
 
   return (
     <Box p={4}>
-
       <Typography
         variant="h4"
         fontWeight="bold"

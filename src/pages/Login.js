@@ -1,37 +1,35 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const API = process.env.REACT_APP_API_URL;
+
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
-  if (e) e.preventDefault();
+    if (e) e.preventDefault();
 
-  try {
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      { username, password }
-    );
+    try {
+      const res = await axios.post(
+        `${API}/api/auth/login`,
+        { username, password }
+      );
 
-    console.log("Login Response:", res.data); // 🔎 debug
+      sessionStorage.setItem("loggedIn", "true");
 
-    sessionStorage.setItem("loggedIn", "true");
+      sessionStorage.setItem(
+        "user",
+        JSON.stringify(res.data.admin)
+      );
 
-    sessionStorage.setItem(
-      "user",
-      JSON.stringify(res.data.admin)
-    );
+      window.location.href = "/";
 
-    console.log("Stored User:", sessionStorage.getItem("user"));
-
-    window.location.href = "/";
-
-  } catch (err) {
-    console.log("Login Error:", err);
-    alert("Invalid credentials");
-  }
-};
+    } catch (err) {
+      console.log("Login Error:", err);
+      alert("Invalid credentials");
+    }
+  };
 
   return (
     <div style={container}>
@@ -65,6 +63,7 @@ function Login() {
 }
 
 /* 🎨 Styles */
+
 const container = {
   display: "flex",
   justifyContent: "center",

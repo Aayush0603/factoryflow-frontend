@@ -14,14 +14,17 @@ import {
   TableBody
 } from "@mui/material";
 
+const API = process.env.REACT_APP_API_URL;
+
 function AttendanceCalendar() {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
 
+  /* ================= FETCH ATTENDANCE HISTORY ================= */
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/attendance/history") // ✅ FIXED
+      .get(`${API}/api/attendance/history`)
       .then(res => {
         setRecords(res.data);
 
@@ -64,6 +67,7 @@ function AttendanceCalendar() {
         />
       </Card>
 
+      {/* ================= MODAL ================= */}
       <Modal
         open={Boolean(selectedDate)}
         onClose={() => setSelectedDate(null)}

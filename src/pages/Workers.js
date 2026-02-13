@@ -7,21 +7,21 @@ const DataGrid = React.lazy(() =>
   import("@mui/x-data-grid").then(mod => ({ default: mod.DataGrid }))
 );
 
+const API = process.env.REACT_APP_API_URL;
+
 function Workers() {
   const [workers, setWorkers] = useState([]);
   const [editingWorker, setEditingWorker] = useState(null);
   const navigate = useNavigate();
 
-  // 🔥 Base API URL (Professional way)
-  const API_URL = "http://localhost:5000/api/workers";
-
   const fetchWorkers = () => {
-    axios.get(API_URL)
+    axios
+      .get(`${API}/api/workers`)
       .then(res => {
         const formatted = res.data.map(w => ({ ...w, id: w._id }));
         setWorkers(formatted);
       })
-      .catch(err => console.error(err));
+      .catch(console.error);
   };
 
   useEffect(() => {
@@ -29,8 +29,13 @@ function Workers() {
   }, []);
 
   const deleteWorker = async (id) => {
-    await axios.delete(`${API_URL}/${id}`);   // ✅ FIXED
-    fetchWorkers();
+    try {
+      await axios.delete(`${API}/api/workers/${id}`);
+      fetchWorkers();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete worker");
+    }
   };
 
   const columns = [
@@ -139,12 +144,17 @@ function Workers() {
             variant="contained"
             sx={{ ml: 2 }}
             onClick={async () => {
-              await axios.put(
-                `${API_URL}/${editingWorker._id}`,   // ✅ FIXED
-                editingWorker
-              );
-              setEditingWorker(null);
-              fetchWorkers();
+              try {
+                await axios.put(
+                  `${API}/api/workers/${editingWorker._id}`,
+                  editingWorker
+                );
+                setEditingWorker(null);
+                fetchWorkers();
+              } catch (err) {
+                console.error(err);
+                alert("Failed to update worker");
+              }
             }}
           >
             Save

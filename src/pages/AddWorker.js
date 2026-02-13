@@ -10,6 +10,8 @@ import {
   Box
 } from "@mui/material";
 
+const API = process.env.REACT_APP_API_URL;
+
 function AddWorker() {
   const [worker, setWorker] = useState({
     name: "",
@@ -19,9 +21,19 @@ function AddWorker() {
   });
 
   const handleSubmit = async () => {
-    await axios.post("http://localhost:5000/add-worker", worker);
-    alert("Worker Added Successfully 🎉");
-    setWorker({ name: "", role: "", salaryType: "daily", salaryAmount: "" });
+    try {
+      await axios.post(`${API}/api/workers`, worker);
+      alert("Worker Added Successfully 🎉");
+      setWorker({
+        name: "",
+        role: "",
+        salaryType: "daily",
+        salaryAmount: ""
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Error adding worker");
+    }
   };
 
   return (
@@ -66,7 +78,9 @@ function AddWorker() {
             label="Salary Amount"
             margin="normal"
             value={worker.salaryAmount}
-            onChange={e => setWorker({ ...worker, salaryAmount: e.target.value })}
+            onChange={e =>
+              setWorker({ ...worker, salaryAmount: e.target.value })
+            }
           />
 
           <Button

@@ -16,17 +16,22 @@ import {
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
+const API = process.env.REACT_APP_API_URL;
+
 function WorkerProfile() {
   const { id } = useParams();
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/worker-profile/${id}`)
+    axios
+      .get(`${API}/api/workers/profile/${id}`)
       .then(res => setData(res.data))
       .catch(err => console.log(err));
   }, [id]);
 
-  if (!data) return <Typography sx={{ p: 3 }}>Loading profile...</Typography>;
+  if (!data) {
+    return <Typography sx={{ p: 3 }}>Loading profile...</Typography>;
+  }
 
   const { worker, totalDaysWorked, totalHoursWorked, attendance } = data;
 
@@ -36,22 +41,37 @@ function WorkerProfile() {
       {/* Profile Card */}
       <Card sx={{ mb: 4, boxShadow: 4, borderRadius: 3 }}>
         <CardContent sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-          <Avatar sx={{ width: 80, height: 80, bgcolor: "#3b82f6", fontSize: 32 }}>
+          <Avatar
+            sx={{
+              width: 80,
+              height: 80,
+              bgcolor: "#3b82f6",
+              fontSize: 32
+            }}
+          >
             {worker.name.charAt(0)}
           </Avatar>
 
           <Box>
-            <Typography variant="h5" fontWeight="bold">{worker.name}</Typography>
-            <Typography color="text.secondary">Role: {worker.role}</Typography>
-            <Typography color="text.secondary">Salary Type: {worker.salaryType}</Typography>
-            <Typography color="text.secondary">Salary: ₹ {worker.salaryAmount}</Typography>
+            <Typography variant="h5" fontWeight="bold">
+              {worker.name}
+            </Typography>
+            <Typography color="text.secondary">
+              Role: {worker.role}
+            </Typography>
+            <Typography color="text.secondary">
+              Salary Type: {worker.salaryType}
+            </Typography>
+            <Typography color="text.secondary">
+              Salary: ₹ {worker.salaryAmount}
+            </Typography>
           </Box>
         </CardContent>
       </Card>
 
       {/* Stats Cards */}
       <Grid container spacing={3} mb={4}>
-       <Grid size={{ xs: 12, md: 4 }}>
+        <Grid item xs={12} md={6}>
           <Card sx={{ boxShadow: 3, borderRadius: 3 }}>
             <CardContent>
               <Typography variant="subtitle2" color="text.secondary">
@@ -64,7 +84,7 @@ function WorkerProfile() {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid item xs={12} md={6}>
           <Card sx={{ boxShadow: 3, borderRadius: 3 }}>
             <CardContent>
               <Typography variant="subtitle2" color="text.secondary">
