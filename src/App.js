@@ -119,6 +119,19 @@ function App() {
                       <h2>FactoryFlow</h2>
                       <div style={{ fontSize: "13px" }}>
                         Welcome, <b>{user?.username}</b>
+                        <br />
+                        Role:
+                        <span
+                          style={{
+                            marginLeft: "5px",
+                            background: "#2563eb",
+                            padding: "2px 8px",
+                            borderRadius: "10px",
+                            fontSize: "11px"
+                          }}
+                        >
+                          {user?.role}
+                        </span>
                       </div>
                     </>
                   )}
@@ -126,7 +139,32 @@ function App() {
                   <NavItem to="/" icon={<DashboardIcon />} label="Dashboard" collapsed={collapsed} setMobileOpen={setMobileOpen} />
                   <NavItem to="/workers" icon={<PeopleIcon />} label="Workers" collapsed={collapsed} setMobileOpen={setMobileOpen} />
                   <NavItem to="/attendance" icon={<EventAvailableIcon />} label="Attendance" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                  <NavItem to="/calendar" icon={<CalendarMonthIcon />} label="Calendar" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                  <NavItem to="/history" icon={<HistoryIcon />} label="History" collapsed={collapsed} setMobileOpen={setMobileOpen} />
                   <NavItem to="/analytics" icon={<InsightsIcon />} label="Analytics" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+
+                  {user?.role === "admin" && (
+                    <>
+                      <NavItem to="/salary" icon={<PaymentsIcon />} label="Salary" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                      <NavItem to="/add-worker" icon={<PersonAddIcon />} label="Add Worker" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                      <NavItem to="/users" icon={<PeopleIcon />} label="Users" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                    </>
+                  )}
+
+                  {/* Dark Mode Toggle */}
+                  <button
+                    onClick={() => setDark(!dark)}
+                    style={{
+                      padding: "8px",
+                      background: "#334155",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "6px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    {!collapsed && (dark ? "Light Mode ☀️" : "Dark Mode 🌙")}
+                  </button>
 
                   <button
                     style={{
@@ -147,43 +185,25 @@ function App() {
                   </button>
                 </div>
 
-                {/* MAIN CONTENT */}
+                {/* Main Content */}
                 <div style={{ flex: 1, padding: "16px" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      marginBottom: "20px"
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      {isMobile && (
-                        <button
-                          onClick={() => setMobileOpen(!mobileOpen)}
-                          style={{
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "22px",
-                            cursor: "pointer"
-                          }}
-                        >
-                          ☰
-                        </button>
-                      )}
-                      <h3 style={{ margin: 0 }}>
-                        Welcome back, {user?.username} 👋
-                      </h3>
-                    </div>
-                  </div>
-
                   <Routes>
                     <Route path="/" element={<Dashboard dark={dark} />} />
-                    <Route path="/workers" element={<Workers />} />
-                    <Route path="/attendance" element={<Attendance />} />
-                    <Route path="/analytics" element={<Analytics />} />
-                    <Route path="/worker/:id" element={<WorkerProfile />} />
+                    <Route path="/workers" element={<Workers dark={dark} />} />
+                    <Route path="/attendance" element={<Attendance dark={dark} />} />
+                    <Route path="/calendar" element={<AttendanceCalendar dark={dark} />} />
+                    <Route path="/history" element={<AttendanceHistory dark={dark} />} />
+                    <Route path="/analytics" element={<Analytics dark={dark} />} />
+
+                    {user?.role === "admin" && (
+                      <>
+                        <Route path="/salary" element={<Salary dark={dark} />} />
+                        <Route path="/add-worker" element={<AddWorker dark={dark} />} />
+                        <Route path="/users" element={<UserManagement />} />
+                      </>
+                    )}
+
+                    <Route path="/worker/:id" element={<WorkerProfile dark={dark} />} />
                   </Routes>
                 </div>
               </div>
