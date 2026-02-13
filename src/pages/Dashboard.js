@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, CardContent, Typography, Grid, Box } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Box,
+  Container
+} from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -28,11 +35,19 @@ function Dashboard({ dark }) {
     completedShift: 0
   });
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     axios
       .get(`${API}/api/dashboard`)
-      .then((res) => setStats(res.data))
-      .catch((err) => console.error(err));
+      .then((res) => {
+        setStats(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
   const chartData = {
@@ -51,6 +66,8 @@ function Dashboard({ dark }) {
   };
 
   const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
       x: { ticks: { color: dark ? "white" : "black" } },
@@ -59,67 +76,88 @@ function Dashboard({ dark }) {
   };
 
   return (
-    <Box p={4}>
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        mb={4}
-        sx={{ letterSpacing: "0.5px" }}
-      >
-        Factory Dashboard
-      </Typography>
-
-      {/* ===== STATS CARDS ===== */}
-      <Grid container spacing={3} mb={3}>
-        <StatCard
-          title="Total Workers"
-          value={stats.totalWorkers}
-          color="#3b82f6"
-        />
-        <StatCard
-          title="Present Today"
-          value={stats.presentToday}
-          color="#10b981"
-        />
-        <StatCard
-          title="Completed Shift"
-          value={stats.completedShift}
-          color="#f59e0b"
-        />
-      </Grid>
-
-      {/* ===== CHART CARD ===== */}
-      <Card
-        sx={{
-          p: 4,
-          borderRadius: 4,
-          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-          transition: "all 0.3s ease",
-          "&:hover": {
-            transform: "translateY(-4px)",
-            boxShadow: "0 18px 40px rgba(0,0,0,0.12)"
-          }
-        }}
-      >
+    <Container maxWidth="xl">
+      <Box sx={{ py: { xs: 3, md: 5 } }}>
+        
+        {/* ===== PAGE TITLE ===== */}
         <Typography
-          variant="h6"
-          mb={3}
-          fontWeight="600"
-          sx={{ letterSpacing: "0.4px" }}
+          sx={{
+            fontSize: { xs: "1.6rem", md: "2rem" },
+            fontWeight: "bold",
+            mb: { xs: 3, md: 4 },
+            letterSpacing: "0.5px"
+          }}
         >
-          Attendance Overview
+          Factory Dashboard
         </Typography>
 
-        <Bar data={chartData} options={chartOptions} />
-      </Card>
-    </Box>
+        {/* ===== STATS CARDS ===== */}
+        <Grid
+          container
+          spacing={{ xs: 2, md: 3 }}
+          sx={{ mb: { xs: 3, md: 4 } }}
+        >
+          <StatCard
+            title="Total Workers"
+            value={stats.totalWorkers}
+            color="#3b82f6"
+            loading={loading}
+          />
+          <StatCard
+            title="Present Today"
+            value={stats.presentToday}
+            color="#10b981"
+            loading={loading}
+          />
+          <StatCard
+            title="Completed Shift"
+            value={stats.completedShift}
+            color="#f59e0b"
+            loading={loading}
+          />
+        </Grid>
+
+        {/* ===== CHART CARD ===== */}
+        <Card
+          sx={{
+            p: { xs: 2, md: 4 },
+            borderRadius: 4,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              transform: "translateY(-4px)",
+              boxShadow: "0 18px 40px rgba(0,0,0,0.12)"
+            }
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: { xs: "1rem", md: "1.2rem" },
+              fontWeight: 600,
+              mb: { xs: 2, md: 3 }
+            }}
+          >
+            Attendance Overview
+          </Typography>
+
+          <Box
+            sx={{
+              width: "100%",
+              height: { xs: 250, md: 400 }
+            }}
+          >
+            <Bar data={chartData} options={chartOptions} />
+          </Box>
+        </Card>
+      </Box>
+    </Container>
   );
 }
 
 /* ===== STAT CARD COMPONENT ===== */
 
-const StatCard = ({ title, value, color }) => (
-  <Grid item xs={12} md={4}>
+const StatCard = ({ title, value, color, loading }) => (
+  <Grid item xs={12} sm={6} md={4}>
     <Card
       sx={{
         borderLeft: `6px solid ${color}`,
@@ -135,17 +173,22 @@ const StatCard = ({ title, value, color }) => (
     >
       <CardContent>
         <Typography
-          variant="body2"
-          sx={{ color: "#64748b", mb: 1 }}
+          sx={{
+            fontSize: { xs: "0.85rem", md: "0.95rem" },
+            color: "#64748b",
+            mb: 1
+          }}
         >
           {title}
         </Typography>
 
         <Typography
-          variant="h4"
-          fontWeight="bold"
+          sx={{
+            fontSize: { xs: "1.6rem", md: "2rem" },
+            fontWeight: "bold"
+          }}
         >
-          {value}
+          {loading ? "..." : value}
         </Typography>
       </CardContent>
     </Card>

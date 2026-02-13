@@ -6,7 +6,7 @@ import {
   Navigate,
   useLocation
 } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -32,17 +32,25 @@ import InsightsIcon from "@mui/icons-material/Insights";
 /* ================= MAIN APP ================= */
 
 function App() {
-
   const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
   const [dark, setDark] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Router>
       <Routes>
-
         <Route path="/login" element={<Login />} />
 
         {!isLoggedIn ? (
@@ -51,26 +59,55 @@ function App() {
           <Route
             path="*"
             element={
-              <div style={{ display: "flex", minHeight: "100vh" }}>
-
+              <div
+                style={{
+                  display: "flex",
+                  minHeight: "100vh",
+                  position: "relative"
+                }}
+              >
                 {/* ================= SIDEBAR ================= */}
+
+                {isMobile && mobileOpen && (
+                  <div
+                    onClick={() => setMobileOpen(false)}
+                    style={{
+                      position: "fixed",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      background: "rgba(0,0,0,0.4)",
+                      zIndex: 999
+                    }}
+                  />
+                )}
 
                 <div
                   style={{
                     ...sidebar,
+                    position: isMobile ? "fixed" : "relative",
+                    left: isMobile
+                      ? mobileOpen
+                        ? "0"
+                        : "-240px"
+                      : "0",
+                    top: 0,
+                    height: "100%",
+                    zIndex: 1000,
                     width: collapsed ? "80px" : "240px"
                   }}
                 >
+                  {/* Toggle Collapse (Desktop only) */}
+                  {!isMobile && (
+                    <button
+                      onClick={() => setCollapsed(!collapsed)}
+                      style={toggleBtn}
+                    >
+                      {collapsed ? "»" : "«"}
+                    </button>
+                  )}
 
-                  {/* Toggle */}
-                  <button
-                    onClick={() => setCollapsed(!collapsed)}
-                    style={toggleBtn}
-                  >
-                    {collapsed ? "»" : "«"}
-                  </button>
-
-                  {/* Logo + User */}
                   {!collapsed && (
                     <>
                       <h2 style={{ marginBottom: "5px" }}>FactoryFlow</h2>
@@ -86,28 +123,25 @@ function App() {
                     </>
                   )}
 
-                  {/* Navigation */}
-                  <NavItem to="/" icon={<DashboardIcon />} label="Dashboard" collapsed={collapsed} />
-                  <NavItem to="/workers" icon={<PeopleIcon />} label="Workers" collapsed={collapsed} />
-                  <NavItem to="/attendance" icon={<EventAvailableIcon />} label="Attendance" collapsed={collapsed} />
-                  <NavItem to="/calendar" icon={<CalendarMonthIcon />} label="Calendar" collapsed={collapsed} />
-                  <NavItem to="/history" icon={<HistoryIcon />} label="History" collapsed={collapsed} />
-                  <NavItem to="/analytics" icon={<InsightsIcon />} label="Analytics" collapsed={collapsed} />
+                  <NavItem to="/" icon={<DashboardIcon />} label="Dashboard" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                  <NavItem to="/workers" icon={<PeopleIcon />} label="Workers" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                  <NavItem to="/attendance" icon={<EventAvailableIcon />} label="Attendance" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                  <NavItem to="/calendar" icon={<CalendarMonthIcon />} label="Calendar" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                  <NavItem to="/history" icon={<HistoryIcon />} label="History" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                  <NavItem to="/analytics" icon={<InsightsIcon />} label="Analytics" collapsed={collapsed} setMobileOpen={setMobileOpen} />
 
                   {user?.role === "admin" && (
                     <>
-                      <NavItem to="/salary" icon={<PaymentsIcon />} label="Salary" collapsed={collapsed} />
-                      <NavItem to="/add-worker" icon={<PersonAddIcon />} label="Add Worker" collapsed={collapsed} />
-                      <NavItem to="/users" icon={<PeopleIcon />} label="Users" collapsed={collapsed} />
+                      <NavItem to="/salary" icon={<PaymentsIcon />} label="Salary" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                      <NavItem to="/add-worker" icon={<PersonAddIcon />} label="Add Worker" collapsed={collapsed} setMobileOpen={setMobileOpen} />
+                      <NavItem to="/users" icon={<PeopleIcon />} label="Users" collapsed={collapsed} setMobileOpen={setMobileOpen} />
                     </>
                   )}
 
-                  {/* Theme */}
                   <button onClick={() => setDark(!dark)} style={themeBtn}>
                     {!collapsed && (dark ? "Light Mode ☀️" : "Dark Mode 🌙")}
                   </button>
 
-                  {/* Logout */}
                   <button
                     style={logoutBtn}
                     onClick={() => {
@@ -117,39 +151,46 @@ function App() {
                   >
                     {!collapsed && "Logout"}
                   </button>
-
                 </div>
-
 
                 {/* ================= MAIN CONTENT ================= */}
 
                 <AnimatedPage dark={dark}>
-
                   <div style={main}>
-
                     {/* Top Header */}
                     <div style={topHeader}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        {isMobile && (
+                          <button
+                            onClick={() => setMobileOpen(!mobileOpen)}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "22px",
+                              marginRight: "10px",
+                              cursor: "pointer"
+                            }}
+                          >
+                            ☰
+                          </button>
+                        )}
 
-                      <div>
-                        <h3 style={{ margin: 0 }}>
-                          Welcome back, {user?.username} 👋
-                        </h3>
-
-                        <span style={{ color: "#64748b", fontSize: "13px" }}>
-                          Here’s what’s happening in your factory today.
-                        </span>
+                        <div>
+                          <h3 style={{ margin: 0 }}>
+                            Welcome back, {user?.username} 👋
+                          </h3>
+                          <span style={{ color: "#64748b", fontSize: "13px" }}>
+                            Here’s what’s happening in your factory today.
+                          </span>
+                        </div>
                       </div>
 
                       <div style={roleBadgeHeader}>
                         {user?.role}
                       </div>
-
                     </div>
 
-
-                    {/* Routes */}
                     <Routes>
-
                       <Route path="/" element={<Dashboard dark={dark} />} />
                       <Route path="/workers" element={<Workers dark={dark} />} />
                       <Route path="/attendance" element={<Attendance dark={dark} />} />
@@ -166,43 +207,31 @@ function App() {
                       )}
 
                       <Route path="/worker/:id" element={<WorkerProfile dark={dark} />} />
-
                     </Routes>
-
                   </div>
-
                 </AnimatedPage>
-
               </div>
             }
           />
         )}
-
       </Routes>
     </Router>
   );
 }
 
-
 /* ================= NAV ITEM ================= */
 
-function NavItem({ to, label, icon, collapsed }) {
-
+function NavItem({ to, label, icon, collapsed, setMobileOpen }) {
   const location = useLocation();
   const isActive = location.pathname === to;
 
   return (
     <Link
       to={to}
+      onClick={() => setMobileOpen(false)}
       style={{
         ...navItem,
         background: isActive ? "#334155" : "transparent"
-      }}
-      onMouseEnter={(e) => {
-        if (!isActive) e.currentTarget.style.background = "#1e293b";
-      }}
-      onMouseLeave={(e) => {
-        if (!isActive) e.currentTarget.style.background = "transparent";
       }}
     >
       <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -213,16 +242,11 @@ function NavItem({ to, label, icon, collapsed }) {
   );
 }
 
-
 /* ================= ANIMATED WRAPPER ================= */
 
 function AnimatedPage({ children, dark }) {
-
-  const location = useLocation();
-
   return (
     <div
-      key={location.pathname}
       style={{
         width: "100%",
         minHeight: "100vh",
@@ -234,7 +258,6 @@ function AnimatedPage({ children, dark }) {
     </div>
   );
 }
-
 
 /* ================= STYLES ================= */
 
@@ -287,7 +310,8 @@ const themeBtn = {
 };
 
 const main = {
-  padding: "20px"
+  padding: "20px",
+  width: "100%"
 };
 
 const userBox = {
