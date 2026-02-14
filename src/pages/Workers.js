@@ -66,7 +66,7 @@ function Workers({ dark }) {
           <Button
             size="small"
             variant="contained"
-            onClick={() => navigate(`/worker/${params.row._id}`)}
+            onClick={() => navigate(`/worker/${params.row.id}`)}
           >
             Profile
           </Button>

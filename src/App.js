@@ -6,7 +6,7 @@ import {
   Navigate,
   useLocation
 } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -34,17 +34,6 @@ function App() {
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
   const [dark, setDark] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
     <Router>
@@ -59,84 +48,85 @@ function App() {
             element={
               <div style={{ display: "flex", minHeight: "100vh" }}>
                 
-                {/* Overlay */}
-                {isMobile && mobileOpen && (
-                  <div
-                    onClick={() => setMobileOpen(false)}
-                    style={{
-                      position: "fixed",
-                      inset: 0,
-                      background: "rgba(0,0,0,0.4)",
-                      zIndex: 999
-                    }}
-                  />
-                )}
-
                 {/* Sidebar */}
                 <div
                   style={{
-                    ...sidebar,
-                    width: collapsed ? "75px" : "220px",
-                    position: isMobile ? "fixed" : "relative",
-                    transform: isMobile
-                      ? mobileOpen
-                        ? "translateX(0)"
-                        : "translateX(-100%)"
-                      : "translateX(0)",
-                    transition: "0.3s",
-                    zIndex: 1000
+                    width: "200px",
+                    background: "linear-gradient(180deg, #111827, #0f172a)",
+                    padding: "18px 14px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                    color: "white"
                   }}
                 >
-                  {!isMobile && (
-                    <button
-                      onClick={() => setCollapsed(!collapsed)}
-                      style={toggleBtn}
+                  <h2 style={{ marginBottom: "8px", fontSize: "18px" }}>
+                    FactoryFlow
+                  </h2>
+
+                  <div style={{ fontSize: "12px", marginBottom: "8px" }}>
+                    Welcome, <b>{user?.username}</b>
+                    <br />
+                    <span
+                      style={{
+                        background: "#2563eb",
+                        padding: "2px 6px",
+                        borderRadius: "10px",
+                        fontSize: "10px"
+                      }}
                     >
-                      {collapsed ? "»" : "«"}
-                    </button>
-                  )}
+                      {user?.role}
+                    </span>
+                  </div>
 
-                  {!collapsed && (
-                    <>
-                      <h2 style={{ marginBottom: "6px", fontSize: "18px" }}>
-                        FactoryFlow
-                      </h2>
-
-                      <div style={userBox}>
-                        Welcome, <b>{user?.username}</b>
-                        <br />
-                        <span style={roleBadge}>{user?.role}</span>
-                      </div>
-                    </>
-                  )}
-
-                  <NavItem to="/" icon={<DashboardIcon />} label="Dashboard" collapsed={collapsed} />
-                  <NavItem to="/workers" icon={<PeopleIcon />} label="Workers" collapsed={collapsed} />
-                  <NavItem to="/attendance" icon={<EventAvailableIcon />} label="Attendance" collapsed={collapsed} />
-                  <NavItem to="/calendar" icon={<CalendarMonthIcon />} label="Calendar" collapsed={collapsed} />
-                  <NavItem to="/history" icon={<HistoryIcon />} label="History" collapsed={collapsed} />
-                  <NavItem to="/analytics" icon={<InsightsIcon />} label="Analytics" collapsed={collapsed} />
+                  <NavItem to="/" icon={<DashboardIcon />} label="Dashboard" />
+                  <NavItem to="/workers" icon={<PeopleIcon />} label="Workers" />
+                  <NavItem to="/attendance" icon={<EventAvailableIcon />} label="Attendance" />
+                  <NavItem to="/calendar" icon={<CalendarMonthIcon />} label="Calendar" />
+                  <NavItem to="/history" icon={<HistoryIcon />} label="History" />
+                  <NavItem to="/analytics" icon={<InsightsIcon />} label="Analytics" />
 
                   {user?.role === "admin" && (
                     <>
-                      <NavItem to="/salary" icon={<PaymentsIcon />} label="Salary" collapsed={collapsed} />
-                      <NavItem to="/add-worker" icon={<PersonAddIcon />} label="Add Worker" collapsed={collapsed} />
-                      <NavItem to="/users" icon={<PeopleIcon />} label="Users" collapsed={collapsed} />
+                      <NavItem to="/salary" icon={<PaymentsIcon />} label="Salary" />
+                      <NavItem to="/add-worker" icon={<PersonAddIcon />} label="Add Worker" />
+                      <NavItem to="/users" icon={<PeopleIcon />} label="Users" />
                     </>
                   )}
 
-                  <button onClick={() => setDark(!dark)} style={themeBtn}>
-                    {!collapsed && (dark ? "Light Mode ☀️" : "Dark Mode 🌙")}
+                  <button
+                    onClick={() => setDark(!dark)}
+                    style={{
+                      padding: "8px",
+                      background: "#334155",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                      marginTop: "10px"
+                    }}
+                  >
+                    {dark ? "Light Mode ☀️" : "Dark Mode 🌙"}
                   </button>
 
                   <button
-                    style={logoutBtn}
+                    style={{
+                      marginTop: "auto",
+                      padding: "8px",
+                      background: "#ef4444",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontSize: "13px"
+                    }}
                     onClick={() => {
                       sessionStorage.clear();
                       window.location.href = "/login";
                     }}
                   >
-                    {!collapsed && "Logout"}
+                    Logout
                   </button>
                 </div>
 
@@ -144,44 +134,11 @@ function App() {
                 <div
                   style={{
                     flex: 1,
-                    marginLeft: isMobile ? 0 : collapsed ? 75 : 220,
-                    padding: "16px 20px",  // 🔥 reduced gap
+                    padding: "20px",
                     background: dark ? "#0f172a" : "#f8fafc",
-                    color: dark ? "#f1f5f9" : "#0f172a",
-                    transition: "0.3s"
+                    color: dark ? "#f1f5f9" : "#0f172a"
                   }}
                 >
-                  {/* Header */}
-                  <div
-                    style={{
-                      ...topHeader,
-                      background: dark ? "#1e293b" : "white",
-                      color: dark ? "white" : "black"
-                    }}
-                  >
-                    {isMobile && (
-                      <button
-                        onClick={() => setMobileOpen(!mobileOpen)}
-                        style={menuBtn(dark)}
-                      >
-                        ☰
-                      </button>
-                    )}
-
-                    <div style={{ flex: 1 }}>
-                      <h3 style={{ margin: 0, fontSize: "16px" }}>
-                        Welcome back, {user?.username}
-                      </h3>
-                      <span style={{ fontSize: "12px", opacity: 0.7 }}>
-                        Factory overview
-                      </span>
-                    </div>
-
-                    <div style={roleBadgeHeader}>
-                      {user?.role}
-                    </div>
-                  </div>
-
                   <Routes>
                     <Route path="/" element={<Dashboard dark={dark} />} />
                     <Route path="/workers" element={<Workers dark={dark} />} />
@@ -208,9 +165,7 @@ function App() {
   );
 }
 
-/* ===== Components ===== */
-
-function NavItem({ to, label, icon, collapsed }) {
+function NavItem({ to, label, icon }) {
   const location = useLocation();
   const isActive = location.pathname === to;
 
@@ -230,88 +185,9 @@ function NavItem({ to, label, icon, collapsed }) {
       }}
     >
       {icon}
-      {!collapsed && label}
+      {label}
     </Link>
   );
 }
-
-/* ===== Styles ===== */
-
-const sidebar = {
-  background: "linear-gradient(180deg, #111827, #0f172a)",
-  padding: "18px 14px",
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
-  color: "white",
-  minHeight: "100vh"
-};
-
-const toggleBtn = {
-  background: "transparent",
-  border: "none",
-  color: "white",
-  cursor: "pointer",
-  fontSize: "16px"
-};
-
-const logoutBtn = {
-  marginTop: "auto",
-  padding: "8px",
-  background: "#ef4444",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer",
-  fontSize: "13px"
-};
-
-const themeBtn = {
-  padding: "8px",
-  background: "#334155",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer",
-  fontSize: "13px"
-};
-
-const userBox = {
-  fontSize: "12px",
-  marginBottom: "8px"
-};
-
-const roleBadge = {
-  background: "#2563eb",
-  padding: "2px 6px",
-  borderRadius: "10px",
-  fontSize: "10px"
-};
-
-const roleBadgeHeader = {
-  background: "#2563eb",
-  color: "white",
-  padding: "4px 10px",
-  borderRadius: "14px",
-  fontSize: "11px"
-};
-
-const topHeader = {
-  padding: "10px 14px",
-  borderRadius: "10px",
-  display: "flex",
-  alignItems: "center",
-  marginBottom: "12px",
-  boxShadow: "0 3px 8px rgba(0,0,0,0.05)"
-};
-
-const menuBtn = (dark) => ({
-  background: "transparent",
-  border: "none",
-  fontSize: "20px",
-  cursor: "pointer",
-  marginRight: "10px",
-  color: dark ? "white" : "black"
-});
 
 export default App;
