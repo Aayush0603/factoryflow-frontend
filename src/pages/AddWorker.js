@@ -7,10 +7,8 @@ import {
   Button,
   Typography,
   MenuItem,
-  Box,
-  useMediaQuery
+  Box
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 
 const API = process.env.REACT_APP_API_URL;
 
@@ -22,13 +20,11 @@ function AddWorker() {
     salaryAmount: ""
   });
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const handleSubmit = async () => {
     try {
       await axios.post(`${API}/api/workers`, worker);
       alert("Worker Added Successfully 🎉");
+
       setWorker({
         name: "",
         role: "",
@@ -42,37 +38,27 @@ function AddWorker() {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "80vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: isMobile ? "flex-start" : "center",
-        px: 2,
-        py: 3
-      }}
-    >
-      <Card
+    <Box sx={{ maxWidth: 520 }}>
+      <Typography
         sx={{
-          width: "100%",
-          maxWidth: 480,
-          borderRadius: 3,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.08)"
+          fontSize: { xs: "1.4rem", md: "1.8rem" },
+          fontWeight: "bold",
+          mb: 3
         }}
       >
-        <CardContent>
-          <Typography
-            sx={{
-              fontSize: { xs: "1.4rem", md: "1.6rem" },
-              fontWeight: "bold",
-              mb: 3
-            }}
-          >
-            Add New Worker
-          </Typography>
+        Add New Worker
+      </Typography>
 
+      <Card
+        sx={{
+          borderRadius: 3,
+          boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
+        }}
+      >
+        <CardContent sx={{ p: 3 }}>
           <TextField
             fullWidth
+            size="small"
             label="Worker Name"
             margin="normal"
             value={worker.name}
@@ -83,6 +69,7 @@ function AddWorker() {
 
           <TextField
             fullWidth
+            size="small"
             label="Role"
             margin="normal"
             value={worker.role}
@@ -94,6 +81,7 @@ function AddWorker() {
           <TextField
             select
             fullWidth
+            size="small"
             label="Salary Type"
             margin="normal"
             value={worker.salaryType}
@@ -107,6 +95,7 @@ function AddWorker() {
 
           <TextField
             fullWidth
+            size="small"
             type="number"
             label="Salary Amount"
             margin="normal"
@@ -123,9 +112,10 @@ function AddWorker() {
             fullWidth
             variant="contained"
             sx={{
-              mt: 3,
-              py: 1.3,
-              fontWeight: 600
+              mt: 2.5,
+              py: 1,
+              fontWeight: 600,
+              textTransform: "none"
             }}
             onClick={handleSubmit}
           >

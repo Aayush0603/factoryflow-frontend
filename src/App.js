@@ -38,7 +38,6 @@ function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Make mobile detection reactive
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -60,35 +59,31 @@ function App() {
             element={
               <div style={{ display: "flex", minHeight: "100vh" }}>
                 
-                {/* ===== Overlay ===== */}
+                {/* Overlay */}
                 {isMobile && mobileOpen && (
                   <div
                     onClick={() => setMobileOpen(false)}
                     style={{
                       position: "fixed",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
+                      inset: 0,
                       background: "rgba(0,0,0,0.4)",
                       zIndex: 999
                     }}
                   />
                 )}
 
-                {/* ===== SIDEBAR ===== */}
+                {/* Sidebar */}
                 <div
                   style={{
                     ...sidebar,
-                    width: collapsed ? "80px" : "240px",
+                    width: collapsed ? "75px" : "220px",
                     position: isMobile ? "fixed" : "relative",
-                    height: "100vh",
                     transform: isMobile
                       ? mobileOpen
                         ? "translateX(0)"
                         : "translateX(-100%)"
                       : "translateX(0)",
-                    transition: "transform 0.3s ease",
+                    transition: "0.3s",
                     zIndex: 1000
                   }}
                 >
@@ -103,15 +98,14 @@ function App() {
 
                   {!collapsed && (
                     <>
-                      <h2 style={{ marginBottom: "5px" }}>FactoryFlow</h2>
+                      <h2 style={{ marginBottom: "6px", fontSize: "18px" }}>
+                        FactoryFlow
+                      </h2>
 
                       <div style={userBox}>
                         Welcome, <b>{user?.username}</b>
                         <br />
-                        Role:
-                        <span style={roleBadge}>
-                          {user?.role}
-                        </span>
+                        <span style={roleBadge}>{user?.role}</span>
                       </div>
                     </>
                   )}
@@ -146,49 +140,40 @@ function App() {
                   </button>
                 </div>
 
-                {/* ===== MAIN CONTENT ===== */}
+                {/* Main Content */}
                 <div
                   style={{
-                    ...main,
-                    marginLeft: isMobile
-                      ? "0"
-                      : collapsed
-                      ? "80px"
-                      : "240px",
-                    transition: "margin 0.3s ease",
-                    width: "100%"
+                    flex: 1,
+                    marginLeft: isMobile ? 0 : collapsed ? 75 : 220,
+                    padding: "16px 20px",  // 🔥 reduced gap
+                    background: dark ? "#0f172a" : "#f8fafc",
+                    color: dark ? "#f1f5f9" : "#0f172a",
+                    transition: "0.3s"
                   }}
                 >
-                  {/* ===== TOP HEADER ===== */}
+                  {/* Header */}
                   <div
                     style={{
                       ...topHeader,
-                      flexDirection: isMobile ? "column" : "row",
-                      alignItems: isMobile ? "flex-start" : "center",
-                      gap: isMobile ? "10px" : "0"
+                      background: dark ? "#1e293b" : "white",
+                      color: dark ? "white" : "black"
                     }}
                   >
                     {isMobile && (
                       <button
                         onClick={() => setMobileOpen(!mobileOpen)}
-                        style={{
-                          background: "transparent",
-                          border: "none",
-                          fontSize: "22px",
-                          cursor: "pointer"
-                        }}
+                        style={menuBtn(dark)}
                       >
                         ☰
                       </button>
                     )}
 
-                    <div>
-                      <h3 style={{ margin: 0 }}>
-                        Welcome back, {user?.username} 👋
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ margin: 0, fontSize: "16px" }}>
+                        Welcome back, {user?.username}
                       </h3>
-
-                      <span style={{ color: "#64748b", fontSize: "13px" }}>
-                        Here’s what’s happening in your factory today.
+                      <span style={{ fontSize: "12px", opacity: 0.7 }}>
+                        Factory overview
                       </span>
                     </div>
 
@@ -204,7 +189,6 @@ function App() {
                     <Route path="/calendar" element={<AttendanceCalendar dark={dark} />} />
                     <Route path="/history" element={<AttendanceHistory dark={dark} />} />
                     <Route path="/analytics" element={<Analytics dark={dark} />} />
-
                     {user?.role === "admin" && (
                       <>
                         <Route path="/salary" element={<Salary dark={dark} />} />
@@ -212,7 +196,6 @@ function App() {
                         <Route path="/users" element={<UserManagement />} />
                       </>
                     )}
-
                     <Route path="/worker/:id" element={<WorkerProfile dark={dark} />} />
                   </Routes>
                 </div>
@@ -225,7 +208,7 @@ function App() {
   );
 }
 
-/* ================= NAV ITEM ================= */
+/* ===== Components ===== */
 
 function NavItem({ to, label, icon, collapsed }) {
   const location = useLocation();
@@ -235,36 +218,33 @@ function NavItem({ to, label, icon, collapsed }) {
     <Link
       to={to}
       style={{
-        ...navItem,
-        background: isActive ? "#334155" : "transparent"
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        padding: "8px 10px",
+        borderRadius: "8px",
+        fontSize: "14px",
+        textDecoration: "none",
+        background: isActive ? "#334155" : "transparent",
+        color: "white"
       }}
     >
-      <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {icon}
-        {!collapsed && label}
-      </span>
+      {icon}
+      {!collapsed && label}
     </Link>
   );
 }
 
-/* ================= STYLES ================= */
+/* ===== Styles ===== */
 
 const sidebar = {
   background: "linear-gradient(180deg, #111827, #0f172a)",
-  boxShadow: "4px 0 20px rgba(0,0,0,0.3)",
-  padding: "20px",
+  padding: "18px 14px",
   display: "flex",
   flexDirection: "column",
-  gap: "14px",
-  color: "white"
-};
-
-const navItem = {
+  gap: "10px",
   color: "white",
-  textDecoration: "none",
-  padding: "10px 12px",
-  borderRadius: "10px",
-  fontSize: "15px"
+  minHeight: "100vh"
 };
 
 const toggleBtn = {
@@ -272,8 +252,7 @@ const toggleBtn = {
   border: "none",
   color: "white",
   cursor: "pointer",
-  fontSize: "18px",
-  marginBottom: "10px"
+  fontSize: "16px"
 };
 
 const logoutBtn = {
@@ -283,7 +262,8 @@ const logoutBtn = {
   color: "white",
   border: "none",
   borderRadius: "6px",
-  cursor: "pointer"
+  cursor: "pointer",
+  fontSize: "13px"
 };
 
 const themeBtn = {
@@ -292,44 +272,46 @@ const themeBtn = {
   color: "white",
   border: "none",
   borderRadius: "6px",
-  cursor: "pointer"
-};
-
-const main = {
-  padding: "20px",
-  flex: 1
+  cursor: "pointer",
+  fontSize: "13px"
 };
 
 const userBox = {
-  fontSize: "13px",
-  marginBottom: "15px"
+  fontSize: "12px",
+  marginBottom: "8px"
 };
 
 const roleBadge = {
-  marginLeft: "5px",
   background: "#2563eb",
-  padding: "2px 8px",
+  padding: "2px 6px",
   borderRadius: "10px",
-  fontSize: "11px"
+  fontSize: "10px"
 };
 
 const roleBadgeHeader = {
   background: "#2563eb",
   color: "white",
-  padding: "6px 14px",
-  borderRadius: "20px",
-  fontSize: "12px"
+  padding: "4px 10px",
+  borderRadius: "14px",
+  fontSize: "11px"
 };
 
 const topHeader = {
-  background: "white",
-  padding: "16px 20px",
-  borderRadius: "14px",
-  marginBottom: "20px",
+  padding: "10px 14px",
+  borderRadius: "10px",
   display: "flex",
-  justifyContent: "space-between",
   alignItems: "center",
-  boxShadow: "0 6px 20px rgba(0,0,0,0.05)"
+  marginBottom: "12px",
+  boxShadow: "0 3px 8px rgba(0,0,0,0.05)"
 };
+
+const menuBtn = (dark) => ({
+  background: "transparent",
+  border: "none",
+  fontSize: "20px",
+  cursor: "pointer",
+  marginRight: "10px",
+  color: dark ? "white" : "black"
+});
 
 export default App;

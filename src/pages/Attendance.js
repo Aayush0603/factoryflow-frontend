@@ -1,30 +1,24 @@
 import React, { useEffect, useState } from "react";
 import {
   Card,
-  CardContent,
   Typography,
   Button,
   MenuItem,
   Select,
   Box,
   FormControl,
-  useMediaQuery
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 
 const API = process.env.REACT_APP_API_URL;
 
-function Attendance() {
+function Attendance({ dark }) {
   const [workers, setWorkers] = useState([]);
   const [selectedWorker, setSelectedWorker] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  /* ================= GET WORKERS ================= */
+  /* ===== Fetch Workers ===== */
   useEffect(() => {
     axios
       .get(`${API}/api/workers`)
@@ -32,7 +26,7 @@ function Attendance() {
       .catch(console.error);
   }, []);
 
-  /* ================= GET TODAY STATUS ================= */
+  /* ===== Fetch Today Status ===== */
   useEffect(() => {
     if (selectedWorker) {
       axios
@@ -42,7 +36,7 @@ function Attendance() {
     }
   }, [selectedWorker]);
 
-  /* ================= CHECK IN ================= */
+  /* ===== Check In ===== */
   const handleCheckIn = async () => {
     try {
       await axios.post(`${API}/api/attendance/checkin`, {
@@ -52,12 +46,11 @@ function Attendance() {
       setMessage("Check-In Successful ✅");
       setStatus("checked_in");
     } catch (err) {
-      console.error(err);
       setMessage("Check-In failed");
     }
   };
 
-  /* ================= CHECK OUT ================= */
+  /* ===== Check Out ===== */
   const handleCheckOut = async () => {
     try {
       const res = await axios.post(`${API}/api/attendance/checkout`, {
@@ -70,115 +63,93 @@ function Attendance() {
 
       setStatus("completed");
     } catch (err) {
-      console.error(err);
       setMessage(err.response?.data?.message || "Checkout failed");
     }
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "80vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: isMobile ? "flex-start" : "center",
-        px: 2,
-        py: 3
-      }}
-    >
-      <Card
+    <>
+      {/* ===== Title ===== */}
+      <Typography
         sx={{
-          width: "100%",
-          maxWidth: 480,
-          borderRadius: 3,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.08)"
+          fontSize: { xs: "1.3rem", md: "1.7rem" },
+          fontWeight: "bold",
+          mb: 2
         }}
       >
-        <CardContent>
-          <Typography
-            sx={{
-              fontSize: { xs: "1.3rem", md: "1.5rem" },
-              fontWeight: "bold",
-              mb: 3
-            }}
+        Worker Attendance
+      </Typography>
+
+      <Card
+        sx={{
+          maxWidth: 480,
+          borderRadius: 3,
+          p: 3,
+          background: dark ? "#1e293b" : "white",
+          boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
+        }}
+      >
+        {/* ===== Worker Select ===== */}
+        <FormControl fullWidth size="small">
+          <Select
+            value={selectedWorker}
+            onChange={e => setSelectedWorker(e.target.value)}
+            displayEmpty
           >
-            Worker Attendance
+            <MenuItem value="">Select Worker</MenuItem>
+            {workers.map(w => (
+              <MenuItem key={w._id} value={w._id}>
+                {w.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* ===== Buttons ===== */}
+        <Box
+          sx={{
+            mt: 2,
+            display: "flex",
+            flexDirection: "column",
+            gap: 1.5
+          }}
+        >
+          {status === "not_checked_in" && (
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleCheckIn}
+            >
+              Check In
+            </Button>
+          )}
+
+          {status === "checked_in" && (
+            <Button
+              variant="contained"
+              color="success"
+              fullWidth
+              onClick={handleCheckOut}
+            >
+              Check Out
+            </Button>
+          )}
+        </Box>
+
+        {/* ===== Status ===== */}
+        {status === "completed" && (
+          <Typography sx={{ mt: 2, fontWeight: 500, color: "#16a34a" }}>
+            Attendance Completed ✔
           </Typography>
+        )}
 
-          {/* ===== Worker Select ===== */}
-          <FormControl fullWidth>
-            <Select
-              value={selectedWorker}
-              onChange={e => setSelectedWorker(e.target.value)}
-              displayEmpty
-            >
-              <MenuItem value="">Select Worker</MenuItem>
-              {workers.map(w => (
-                <MenuItem key={w._id} value={w._id}>
-                  {w.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {/* ===== Buttons ===== */}
-          <Box
-            sx={{
-              mt: 3,
-              display: "flex",
-              flexDirection: "column",
-              gap: 2
-            }}
-          >
-            {status === "not_checked_in" && (
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={handleCheckIn}
-              >
-                Check In
-              </Button>
-            )}
-
-            {status === "checked_in" && (
-              <Button
-                variant="contained"
-                color="success"
-                fullWidth
-                onClick={handleCheckOut}
-              >
-                Check Out
-              </Button>
-            )}
-          </Box>
-
-          {/* ===== Status Message ===== */}
-          {status === "completed" && (
-            <Typography
-              sx={{
-                mt: 3,
-                fontWeight: 500,
-                color: "green"
-              }}
-            >
-              Attendance Completed ✔
-            </Typography>
-          )}
-
-          {message && (
-            <Typography
-              sx={{
-                mt: 2,
-                fontSize: "0.9rem",
-                color: "#64748b"
-              }}
-            >
-              {message}
-            </Typography>
-          )}
-        </CardContent>
+        {message && (
+          <Typography sx={{ mt: 1.5, fontSize: "0.9rem", color: "#64748b" }}>
+            {message}
+          </Typography>
+        )}
       </Card>
-    </Box>
+    </>
   );
 }
 

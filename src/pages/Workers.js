@@ -5,7 +5,6 @@ import {
   Box,
   Typography,
   Card,
-  CardContent,
   Grid,
   TextField,
   Select,
@@ -21,7 +20,7 @@ const DataGrid = React.lazy(() =>
 
 const API = process.env.REACT_APP_API_URL;
 
-function Workers() {
+function Workers({ dark }) {
   const [workers, setWorkers] = useState([]);
   const [editingWorker, setEditingWorker] = useState(null);
   const navigate = useNavigate();
@@ -61,31 +60,29 @@ function Workers() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 260,
-      sortable: false,
-      filterable: false,
+      width: 250,
       renderCell: (params) => (
         <Box display="flex" gap={1}>
           <Button
-            variant="contained"
             size="small"
+            variant="contained"
             onClick={() => navigate(`/worker/${params.row._id}`)}
           >
             Profile
           </Button>
 
           <Button
-            variant="outlined"
             size="small"
+            variant="outlined"
             onClick={() => setEditingWorker(params.row)}
           >
             Edit
           </Button>
 
           <Button
+            size="small"
             variant="outlined"
             color="error"
-            size="small"
             onClick={() => deleteWorker(params.row._id)}
           >
             Delete
@@ -96,91 +93,109 @@ function Workers() {
   ];
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
+    <>
+      {/* ===== Title ===== */}
       <Typography
         sx={{
           fontSize: { xs: "1.4rem", md: "1.8rem" },
           fontWeight: "bold",
-          mb: 3
+          mb: 2
         }}
       >
         Workers Management
       </Typography>
 
-      {/* ================= DESKTOP TABLE ================= */}
+      {/* ===== Desktop Table ===== */}
       {!isMobile && (
-        <Box sx={{ height: 500, width: "100%" }}>
+        <Box sx={{ height: 420, width: "100%" }}>
           <React.Suspense fallback={<div>Loading table...</div>}>
             <DataGrid
               rows={workers}
               columns={columns}
               pageSize={5}
               rowsPerPageOptions={[5]}
+              sx={{
+                background: dark ? "#1e293b" : "white",
+                borderRadius: 2
+              }}
             />
           </React.Suspense>
         </Box>
       )}
 
-      {/* ================= MOBILE CARDS ================= */}
+      {/* ===== Mobile Cards ===== */}
       {isMobile && (
         <Grid container spacing={2}>
           {workers.map(worker => (
             <Grid item xs={12} key={worker._id}>
-              <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-                <CardContent>
-                  <Typography fontWeight="bold">
-                    {worker.name}
-                  </Typography>
+              <Card
+                sx={{
+                  borderRadius: 3,
+                  p: 2,
+                  background: dark ? "#1e293b" : "white",
+                  boxShadow: 2
+                }}
+              >
+                <Typography fontWeight="bold">
+                  {worker.name}
+                </Typography>
 
-                  <Typography variant="body2" color="text.secondary">
-                    Role: {worker.role}
-                  </Typography>
+                <Typography variant="body2" sx={{ mt: 0.5 }}>
+                  Role: {worker.role}
+                </Typography>
 
-                  <Typography variant="body2" color="text.secondary">
-                    Type: {worker.salaryType}
-                  </Typography>
+                <Typography variant="body2">
+                  Type: {worker.salaryType}
+                </Typography>
 
-                  <Typography variant="body2" color="text.secondary" mb={2}>
-                    Salary: ₹{worker.salaryAmount}
-                  </Typography>
+                <Typography variant="body2" mb={1}>
+                  Salary: ₹{worker.salaryAmount}
+                </Typography>
 
-                  <Box display="flex" gap={1} flexWrap="wrap">
-                    <Button
-                      size="small"
-                      variant="contained"
-                      onClick={() => navigate(`/worker/${worker._id}`)}
-                    >
-                      Profile
-                    </Button>
+                <Box display="flex" gap={1} flexWrap="wrap">
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={() => navigate(`/worker/${worker._id}`)}
+                  >
+                    Profile
+                  </Button>
 
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => setEditingWorker(worker)}
-                    >
-                      Edit
-                    </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => setEditingWorker(worker)}
+                  >
+                    Edit
+                  </Button>
 
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="error"
-                      onClick={() => deleteWorker(worker._id)}
-                    >
-                      Delete
-                    </Button>
-                  </Box>
-                </CardContent>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="error"
+                    onClick={() => deleteWorker(worker._id)}
+                  >
+                    Delete
+                  </Button>
+                </Box>
               </Card>
             </Grid>
           ))}
         </Grid>
       )}
 
-      {/* ================= EDIT FORM ================= */}
+      {/* ===== Edit Form ===== */}
       {editingWorker && (
-        <Card sx={{ mt: 4, p: 3, borderRadius: 3 }}>
-          <Typography variant="h6" mb={2}>
+        <Card
+          sx={{
+            mt: 3,
+            p: 2,
+            borderRadius: 3,
+            background: dark ? "#1e293b" : "white",
+            boxShadow: 2
+          }}
+        >
+          <Typography sx={{ fontWeight: "bold", mb: 2 }}>
             Edit Worker
           </Typography>
 
@@ -188,6 +203,7 @@ function Workers() {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
+                size="small"
                 label="Name"
                 value={editingWorker.name}
                 onChange={e =>
@@ -199,6 +215,7 @@ function Workers() {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
+                size="small"
                 label="Role"
                 value={editingWorker.role}
                 onChange={e =>
@@ -210,6 +227,7 @@ function Workers() {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
+                size="small"
                 type="number"
                 label="Salary"
                 value={editingWorker.salaryAmount}
@@ -225,6 +243,7 @@ function Workers() {
             <Grid item xs={12} md={6}>
               <Select
                 fullWidth
+                size="small"
                 value={editingWorker.salaryType}
                 onChange={e =>
                   setEditingWorker({
@@ -239,7 +258,7 @@ function Workers() {
             </Grid>
           </Grid>
 
-          <Box mt={3}>
+          <Box mt={2}>
             <Button
               variant="contained"
               onClick={async () => {
@@ -261,7 +280,7 @@ function Workers() {
           </Box>
         </Card>
       )}
-    </Box>
+    </>
   );
 }
 

@@ -12,14 +12,13 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Grid,
   useMediaQuery
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 const API = process.env.REACT_APP_API_URL;
 
-function AttendanceCalendar() {
+function AttendanceCalendar({ dark }) {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -56,12 +55,12 @@ function AttendanceCalendar() {
   );
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
+    <>
       <Typography
         sx={{
-          fontSize: { xs: "1.4rem", md: "1.8rem" },
+          fontSize: { xs: "1.3rem", md: "1.5rem" },
           fontWeight: "bold",
-          mb: 3
+          mb: 2
         }}
       >
         Attendance Overview
@@ -71,9 +70,10 @@ function AttendanceCalendar() {
       <Card
         sx={{
           borderRadius: 3,
-          boxShadow: 3,
+          boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
           p: 2,
-          overflowX: "auto"
+          overflowX: "auto",
+          background: dark ? "#1e293b" : "white"
         }}
       >
         <Box sx={{ minWidth: isMobile ? 900 : "auto" }}>
@@ -104,16 +104,16 @@ function AttendanceCalendar() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: isMobile ? "95%" : 650,
+            width: isMobile ? "95%" : 600,
             maxHeight: "85vh",
             overflowY: "auto",
-            bgcolor: "background.paper",
+            bgcolor: dark ? "#1e293b" : "white",
             borderRadius: 3,
             boxShadow: 24,
-            p: 3
+            p: 2.5
           }}
         >
-          <Typography variant="h6" mb={2}>
+          <Typography variant="subtitle1" mb={2}>
             Attendance on {selectedDate}
           </Typography>
 
@@ -123,9 +123,9 @@ function AttendanceCalendar() {
             </Typography>
           )}
 
-          {/* ===== Desktop Table ===== */}
+          {/* Desktop Table */}
           {!isMobile && dayRecords.length > 0 && (
-            <Table>
+            <Table size="small">
               <TableHead>
                 <TableRow>
                   <TableCell><b>Name</b></TableCell>
@@ -147,32 +147,35 @@ function AttendanceCalendar() {
             </Table>
           )}
 
-          {/* ===== Mobile Cards ===== */}
-          {isMobile && dayRecords.length > 0 && (
-            <Grid container spacing={2}>
-              {dayRecords.map((r, i) => (
-                <Grid item xs={12} key={i}>
-                  <Card sx={{ p: 2, borderRadius: 2 }}>
-                    <Typography fontWeight="bold">
-                      {r.name}
-                    </Typography>
-                    <Typography variant="body2">
-                      Check In: {r.checkIn}
-                    </Typography>
-                    <Typography variant="body2">
-                      Check Out: {r.checkOut || "-"}
-                    </Typography>
-                    <Typography variant="body2" mt={1}>
-                      Hours: {r.workHours}
-                    </Typography>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          )}
+          {/* Mobile Cards */}
+          {isMobile && dayRecords.length > 0 &&
+            dayRecords.map((r, i) => (
+              <Card
+                key={i}
+                sx={{
+                  p: 2,
+                  mb: 1.5,
+                  borderRadius: 2,
+                  background: dark ? "#0f172a" : "#f8fafc"
+                }}
+              >
+                <Typography fontWeight="bold">
+                  {r.name}
+                </Typography>
+                <Typography variant="body2">
+                  Check In: {r.checkIn}
+                </Typography>
+                <Typography variant="body2">
+                  Check Out: {r.checkOut || "-"}
+                </Typography>
+                <Typography variant="body2" mt={1}>
+                  Hours: {r.workHours}
+                </Typography>
+              </Card>
+            ))}
         </Box>
       </Modal>
-    </Box>
+    </>
   );
 }
 

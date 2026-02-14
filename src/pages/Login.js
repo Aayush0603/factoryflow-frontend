@@ -54,25 +54,37 @@ function Login() {
       <Card
         sx={{
           width: "100%",
-          maxWidth: 400,
+          maxWidth: 360,
           borderRadius: 3,
-          boxShadow: "0 12px 30px rgba(0,0,0,0.25)"
+          boxShadow: "0 10px 28px rgba(0,0,0,0.25)"
         }}
       >
-        <CardContent>
+        <CardContent sx={{ p: 3 }}>
           <Typography
             sx={{
-              fontSize: { xs: "1.5rem", md: "1.7rem" },
+              fontSize: "1.6rem",
               fontWeight: "bold",
               textAlign: "center",
-              mb: 3
+              mb: 2.5
             }}
           >
-            FactoryFlow Login
+            FactoryFlow
+          </Typography>
+
+          <Typography
+            sx={{
+              textAlign: "center",
+              fontSize: "0.9rem",
+              color: "#64748b",
+              mb: 2
+            }}
+          >
+            Sign in to continue
           </Typography>
 
           <TextField
             fullWidth
+            size="small"
             label="Username"
             margin="normal"
             value={username}
@@ -81,6 +93,7 @@ function Login() {
 
           <TextField
             fullWidth
+            size="small"
             label="Password"
             type="password"
             margin="normal"
@@ -92,9 +105,10 @@ function Login() {
             fullWidth
             variant="contained"
             sx={{
-              mt: 3,
-              py: 1.2,
-              fontWeight: 600
+              mt: 2.5,
+              py: 1,
+              fontWeight: 600,
+              textTransform: "none"
             }}
             onClick={handleLogin}
             disabled={loading}

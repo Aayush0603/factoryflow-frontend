@@ -11,14 +11,13 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Grid,
   useMediaQuery
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 const API = process.env.REACT_APP_API_URL;
 
-function UserManagement() {
+function UserManagement({ dark }) {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState({
     username: "",
@@ -46,11 +45,9 @@ function UserManagement() {
         `${API}/api/auth/create-supervisor`,
         form
       );
-
       setForm({ username: "", password: "", role: "supervisor" });
       fetchUsers();
     } catch (err) {
-      console.error(err);
       alert("Failed to create user");
     }
   };
@@ -60,26 +57,33 @@ function UserManagement() {
       await axios.delete(`${API}/api/auth/users/${id}`);
       fetchUsers();
     } catch (err) {
-      console.error(err);
       alert("Failed to delete user");
     }
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
+    <>
       <Typography
         sx={{
-          fontSize: { xs: "1.5rem", md: "2rem" },
+          fontSize: { xs: "1.4rem", md: "1.6rem" },
           fontWeight: "bold",
-          mb: 3
+          mb: 2
         }}
       >
         User Management
       </Typography>
 
-      {/* ===== Create User Card ===== */}
-      <Card sx={{ mb: 4, p: 3, borderRadius: 3 }}>
-        <Typography variant="h6" mb={2}>
+      {/* ===== Create User ===== */}
+      <Card
+        sx={{
+          mb: 2,
+          p: 2,
+          borderRadius: 3,
+          background: dark ? "#1e293b" : "white",
+          boxShadow: "0 6px 16px rgba(0,0,0,0.08)"
+        }}
+      >
+        <Typography variant="subtitle1" mb={2}>
           Create Supervisor
         </Typography>
 
@@ -92,6 +96,7 @@ function UserManagement() {
         >
           <TextField
             fullWidth
+            size="small"
             label="Username"
             value={form.username}
             onChange={e =>
@@ -101,6 +106,7 @@ function UserManagement() {
 
           <TextField
             fullWidth
+            size="small"
             label="Password"
             type="password"
             value={form.password}
@@ -112,7 +118,7 @@ function UserManagement() {
           <Button
             variant="contained"
             onClick={createUser}
-            sx={{ minWidth: isMobile ? "100%" : "150px" }}
+            sx={{ minWidth: isMobile ? "100%" : 130 }}
           >
             Create
           </Button>
@@ -120,19 +126,26 @@ function UserManagement() {
       </Card>
 
       {/* ===== Users List ===== */}
-      <Card sx={{ p: 3, borderRadius: 3 }}>
-        <Typography variant="h6" mb={2}>
+      <Card
+        sx={{
+          p: 2,
+          borderRadius: 3,
+          background: dark ? "#1e293b" : "white",
+          boxShadow: "0 6px 16px rgba(0,0,0,0.08)"
+        }}
+      >
+        <Typography variant="subtitle1" mb={2}>
           All Users
         </Typography>
 
         {/* Desktop Table */}
         {!isMobile && (
-          <Table>
+          <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Username</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell><b>Username</b></TableCell>
+                <TableCell><b>Role</b></TableCell>
+                <TableCell><b>Action</b></TableCell>
               </TableRow>
             </TableHead>
 
@@ -144,6 +157,7 @@ function UserManagement() {
                   <TableCell>
                     {user.role !== "admin" && (
                       <Button
+                        size="small"
                         color="error"
                         onClick={() => deleteUser(user._id)}
                       >
@@ -157,36 +171,39 @@ function UserManagement() {
           </Table>
         )}
 
-        {/* Mobile Card View */}
-        {isMobile && (
-          <Grid container spacing={2}>
-            {users.map(user => (
-              <Grid item xs={12} key={user._id}>
-                <Card sx={{ p: 2, borderRadius: 2 }}>
-                  <Typography fontWeight="bold">
-                    {user.username}
-                  </Typography>
+        {/* Mobile Cards */}
+        {isMobile &&
+          users.map(user => (
+            <Card
+              key={user._id}
+              sx={{
+                p: 2,
+                mb: 1.5,
+                borderRadius: 2,
+                background: dark ? "#0f172a" : "#f8fafc"
+              }}
+            >
+              <Typography fontWeight="bold">
+                {user.username}
+              </Typography>
 
-                  <Typography variant="body2" mb={1}>
-                    Role: {user.role}
-                  </Typography>
+              <Typography variant="body2" mb={1}>
+                Role: {user.role}
+              </Typography>
 
-                  {user.role !== "admin" && (
-                    <Button
-                      color="error"
-                      size="small"
-                      onClick={() => deleteUser(user._id)}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
+              {user.role !== "admin" && (
+                <Button
+                  size="small"
+                  color="error"
+                  onClick={() => deleteUser(user._id)}
+                >
+                  Delete
+                </Button>
+              )}
+            </Card>
+          ))}
       </Card>
-    </Box>
+    </>
   );
 }
 

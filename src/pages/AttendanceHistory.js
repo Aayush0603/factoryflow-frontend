@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Card,
-  CardContent,
   Typography,
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
-  Box,
   Grid,
   useMediaQuery
 } from "@mui/material";
@@ -17,7 +15,7 @@ import { useTheme } from "@mui/material/styles";
 
 const API = process.env.REACT_APP_API_URL;
 
-function AttendanceHistory() {
+function AttendanceHistory({ dark }) {
   const [data, setData] = useState([]);
 
   const theme = useTheme();
@@ -31,12 +29,13 @@ function AttendanceHistory() {
   }, []);
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
+    <>
+      {/* ===== Title ===== */}
       <Typography
         sx={{
-          fontSize: { xs: "1.4rem", md: "1.8rem" },
+          fontSize: { xs: "1.3rem", md: "1.6rem" },
           fontWeight: "bold",
-          mb: 3
+          mb: 2
         }}
       >
         Attendance History
@@ -44,31 +43,37 @@ function AttendanceHistory() {
 
       {/* ================= DESKTOP TABLE ================= */}
       {!isMobile && (
-        <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-          <CardContent>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Check-In</TableCell>
-                  <TableCell>Check-Out</TableCell>
-                  <TableCell>Hours</TableCell>
+        <Card
+          sx={{
+            borderRadius: 3,
+            p: 2,
+            background: dark ? "#1e293b" : "white",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
+          }}
+        >
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell><b>Name</b></TableCell>
+                <TableCell><b>Date</b></TableCell>
+                <TableCell><b>Check-In</b></TableCell>
+                <TableCell><b>Check-Out</b></TableCell>
+                <TableCell><b>Hours</b></TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {data.map((r, i) => (
+                <TableRow key={i}>
+                  <TableCell>{r.name}</TableCell>
+                  <TableCell>{r.date}</TableCell>
+                  <TableCell>{r.checkIn}</TableCell>
+                  <TableCell>{r.checkOut || "-"}</TableCell>
+                  <TableCell>{r.workHours}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.map((r, i) => (
-                  <TableRow key={i}>
-                    <TableCell>{r.name}</TableCell>
-                    <TableCell>{r.date}</TableCell>
-                    <TableCell>{r.checkIn}</TableCell>
-                    <TableCell>{r.checkOut || "-"}</TableCell>
-                    <TableCell>{r.workHours}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
+              ))}
+            </TableBody>
+          </Table>
         </Card>
       )}
 
@@ -77,37 +82,42 @@ function AttendanceHistory() {
         <Grid container spacing={2}>
           {data.map((r, i) => (
             <Grid item xs={12} key={i}>
-              <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-                <CardContent>
-                  <Typography fontWeight="bold" mb={1}>
-                    {r.name}
-                  </Typography>
+              <Card
+                sx={{
+                  borderRadius: 3,
+                  p: 2,
+                  background: dark ? "#1e293b" : "white",
+                  boxShadow: "0 6px 16px rgba(0,0,0,0.08)"
+                }}
+              >
+                <Typography fontWeight="bold" mb={1}>
+                  {r.name}
+                </Typography>
 
-                  <Typography variant="body2" color="text.secondary">
-                    Date: {r.date}
-                  </Typography>
+                <Typography variant="body2">
+                  Date: {r.date}
+                </Typography>
 
-                  <Typography variant="body2" color="text.secondary">
-                    Check-In: {r.checkIn}
-                  </Typography>
+                <Typography variant="body2">
+                  Check-In: {r.checkIn}
+                </Typography>
 
-                  <Typography variant="body2" color="text.secondary">
-                    Check-Out: {r.checkOut || "-"}
-                  </Typography>
+                <Typography variant="body2">
+                  Check-Out: {r.checkOut || "-"}
+                </Typography>
 
-                  <Typography
-                    variant="body2"
-                    sx={{ mt: 1, fontWeight: 500 }}
-                  >
-                    Hours Worked: {r.workHours}
-                  </Typography>
-                </CardContent>
+                <Typography
+                  variant="body2"
+                  sx={{ mt: 1, fontWeight: 500 }}
+                >
+                  Hours: {r.workHours}
+                </Typography>
               </Card>
             </Grid>
           ))}
         </Grid>
       )}
-    </Box>
+    </>
   );
 }
 
