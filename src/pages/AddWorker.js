@@ -7,8 +7,10 @@ import {
   Button,
   Typography,
   MenuItem,
-  Box
+  Box,
+  useMediaQuery
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 const API = process.env.REACT_APP_API_URL;
 
@@ -19,6 +21,9 @@ function AddWorker() {
     salaryType: "daily",
     salaryAmount: ""
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSubmit = async () => {
     try {
@@ -37,10 +42,32 @@ function AddWorker() {
   };
 
   return (
-    <Box display="flex" justifyContent="center" mt={5}>
-      <Card sx={{ width: 400, boxShadow: 4, borderRadius: 3 }}>
+    <Box
+      sx={{
+        minHeight: "80vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: isMobile ? "flex-start" : "center",
+        px: 2,
+        py: 3
+      }}
+    >
+      <Card
+        sx={{
+          width: "100%",
+          maxWidth: 480,
+          borderRadius: 3,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.08)"
+        }}
+      >
         <CardContent>
-          <Typography variant="h5" fontWeight="bold" mb={2}>
+          <Typography
+            sx={{
+              fontSize: { xs: "1.4rem", md: "1.6rem" },
+              fontWeight: "bold",
+              mb: 3
+            }}
+          >
             Add New Worker
           </Typography>
 
@@ -49,7 +76,9 @@ function AddWorker() {
             label="Worker Name"
             margin="normal"
             value={worker.name}
-            onChange={e => setWorker({ ...worker, name: e.target.value })}
+            onChange={e =>
+              setWorker({ ...worker, name: e.target.value })
+            }
           />
 
           <TextField
@@ -57,7 +86,9 @@ function AddWorker() {
             label="Role"
             margin="normal"
             value={worker.role}
-            onChange={e => setWorker({ ...worker, role: e.target.value })}
+            onChange={e =>
+              setWorker({ ...worker, role: e.target.value })
+            }
           />
 
           <TextField
@@ -66,7 +97,9 @@ function AddWorker() {
             label="Salary Type"
             margin="normal"
             value={worker.salaryType}
-            onChange={e => setWorker({ ...worker, salaryType: e.target.value })}
+            onChange={e =>
+              setWorker({ ...worker, salaryType: e.target.value })
+            }
           >
             <MenuItem value="daily">Daily</MenuItem>
             <MenuItem value="monthly">Monthly</MenuItem>
@@ -79,14 +112,21 @@ function AddWorker() {
             margin="normal"
             value={worker.salaryAmount}
             onChange={e =>
-              setWorker({ ...worker, salaryAmount: e.target.value })
+              setWorker({
+                ...worker,
+                salaryAmount: e.target.value
+              })
             }
           />
 
           <Button
             fullWidth
             variant="contained"
-            sx={{ mt: 2, py: 1.2 }}
+            sx={{
+              mt: 3,
+              py: 1.3,
+              fontWeight: 600
+            }}
             onClick={handleSubmit}
           >
             Add Worker

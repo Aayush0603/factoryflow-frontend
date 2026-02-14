@@ -6,8 +6,11 @@ import {
   Button,
   MenuItem,
   Select,
-  Box
+  Box,
+  FormControl,
+  useMediaQuery
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 
 const API = process.env.REACT_APP_API_URL;
@@ -17,6 +20,9 @@ function Attendance() {
   const [selectedWorker, setSelectedWorker] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   /* ================= GET WORKERS ================= */
   useEffect(() => {
@@ -70,32 +76,64 @@ function Attendance() {
   };
 
   return (
-    <Box display="flex" justifyContent="center" mt={5}>
-      <Card sx={{ width: 420, boxShadow: 4, borderRadius: 3 }}>
+    <Box
+      sx={{
+        minHeight: "80vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: isMobile ? "flex-start" : "center",
+        px: 2,
+        py: 3
+      }}
+    >
+      <Card
+        sx={{
+          width: "100%",
+          maxWidth: 480,
+          borderRadius: 3,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.08)"
+        }}
+      >
         <CardContent>
-          <Typography variant="h5" fontWeight="bold" mb={2}>
+          <Typography
+            sx={{
+              fontSize: { xs: "1.3rem", md: "1.5rem" },
+              fontWeight: "bold",
+              mb: 3
+            }}
+          >
             Worker Attendance
           </Typography>
 
-          <Select
-            fullWidth
-            value={selectedWorker}
-            onChange={e => setSelectedWorker(e.target.value)}
-            displayEmpty
-          >
-            <MenuItem value="">Select Worker</MenuItem>
-            {workers.map(w => (
-              <MenuItem key={w._id} value={w._id}>
-                {w.name}
-              </MenuItem>
-            ))}
-          </Select>
+          {/* ===== Worker Select ===== */}
+          <FormControl fullWidth>
+            <Select
+              value={selectedWorker}
+              onChange={e => setSelectedWorker(e.target.value)}
+              displayEmpty
+            >
+              <MenuItem value="">Select Worker</MenuItem>
+              {workers.map(w => (
+                <MenuItem key={w._id} value={w._id}>
+                  {w.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-          <Box mt={3} display="flex" justifyContent="center" gap={2}>
+          {/* ===== Buttons ===== */}
+          <Box
+            sx={{
+              mt: 3,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2
+            }}
+          >
             {status === "not_checked_in" && (
               <Button
                 variant="contained"
-                color="primary"
+                fullWidth
                 onClick={handleCheckIn}
               >
                 Check In
@@ -106,6 +144,7 @@ function Attendance() {
               <Button
                 variant="contained"
                 color="success"
+                fullWidth
                 onClick={handleCheckOut}
               >
                 Check Out
@@ -113,13 +152,30 @@ function Attendance() {
             )}
           </Box>
 
+          {/* ===== Status Message ===== */}
           {status === "completed" && (
-            <Typography color="green" mt={2}>
+            <Typography
+              sx={{
+                mt: 3,
+                fontWeight: 500,
+                color: "green"
+              }}
+            >
               Attendance Completed ✔
             </Typography>
           )}
 
-          <Typography mt={2}>{message}</Typography>
+          {message && (
+            <Typography
+              sx={{
+                mt: 2,
+                fontSize: "0.9rem",
+                color: "#64748b"
+              }}
+            >
+              {message}
+            </Typography>
+          )}
         </CardContent>
       </Card>
     </Box>

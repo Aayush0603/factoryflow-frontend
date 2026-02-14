@@ -6,7 +6,7 @@ import {
   Navigate,
   useLocation
 } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -29,20 +29,27 @@ import HistoryIcon from "@mui/icons-material/History";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import InsightsIcon from "@mui/icons-material/Insights";
 
-/* ================= MAIN APP ================= */
-
 function App() {
-
   const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
   const [dark, setDark] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Make mobile detection reactive
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Router>
       <Routes>
-
         <Route path="/login" element={<Login />} />
 
         {!isLoggedIn ? (
@@ -52,23 +59,47 @@ function App() {
             path="*"
             element={
               <div style={{ display: "flex", minHeight: "100vh" }}>
+                
+                {/* ===== Overlay ===== */}
+                {isMobile && mobileOpen && (
+                  <div
+                    onClick={() => setMobileOpen(false)}
+                    style={{
+                      position: "fixed",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      background: "rgba(0,0,0,0.4)",
+                      zIndex: 999
+                    }}
+                  />
+                )}
 
-                {/* ================= SIDEBAR ================= */}
-
+                {/* ===== SIDEBAR ===== */}
                 <div
                   style={{
                     ...sidebar,
-                    width: collapsed ? "80px" : "240px"
+                    width: collapsed ? "80px" : "240px",
+                    position: isMobile ? "fixed" : "relative",
+                    height: "100vh",
+                    transform: isMobile
+                      ? mobileOpen
+                        ? "translateX(0)"
+                        : "translateX(-100%)"
+                      : "translateX(0)",
+                    transition: "transform 0.3s ease",
+                    zIndex: 1000
                   }}
                 >
-
-                  {/* Toggle */}
-                  <button
-                    onClick={() => setCollapsed(!collapsed)}
-                    style={toggleBtn}
-                  >
-                    {collapsed ? "»" : "«"}
-                  </button>
+                  {!isMobile && (
+                    <button
+                      onClick={() => setCollapsed(!collapsed)}
+                      style={toggleBtn}
+                    >
+                      {collapsed ? "»" : "«"}
+                    </button>
+                  )}
 
                   {!collapsed && (
                     <>
@@ -113,14 +144,44 @@ function App() {
                   >
                     {!collapsed && "Logout"}
                   </button>
-
                 </div>
 
-                {/* ================= MAIN CONTENT ================= */}
+                {/* ===== MAIN CONTENT ===== */}
+                <div
+                  style={{
+                    ...main,
+                    marginLeft: isMobile
+                      ? "0"
+                      : collapsed
+                      ? "80px"
+                      : "240px",
+                    transition: "margin 0.3s ease",
+                    width: "100%"
+                  }}
+                >
+                  {/* ===== TOP HEADER ===== */}
+                  <div
+                    style={{
+                      ...topHeader,
+                      flexDirection: isMobile ? "column" : "row",
+                      alignItems: isMobile ? "flex-start" : "center",
+                      gap: isMobile ? "10px" : "0"
+                    }}
+                  >
+                    {isMobile && (
+                      <button
+                        onClick={() => setMobileOpen(!mobileOpen)}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          fontSize: "22px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        ☰
+                      </button>
+                    )}
 
-                <div style={main}>
-
-                  <div style={topHeader}>
                     <div>
                       <h3 style={{ margin: 0 }}>
                         Welcome back, {user?.username} 👋
@@ -154,14 +215,11 @@ function App() {
 
                     <Route path="/worker/:id" element={<WorkerProfile dark={dark} />} />
                   </Routes>
-
                 </div>
-
               </div>
             }
           />
         )}
-
       </Routes>
     </Router>
   );
@@ -170,7 +228,6 @@ function App() {
 /* ================= NAV ITEM ================= */
 
 function NavItem({ to, label, icon, collapsed }) {
-
   const location = useLocation();
   const isActive = location.pathname === to;
 
@@ -199,8 +256,7 @@ const sidebar = {
   display: "flex",
   flexDirection: "column",
   gap: "14px",
-  color: "white",
-  transition: "all 0.3s ease"
+  color: "white"
 };
 
 const navItem = {
@@ -208,8 +264,7 @@ const navItem = {
   textDecoration: "none",
   padding: "10px 12px",
   borderRadius: "10px",
-  fontSize: "15px",
-  transition: "all 0.2s ease"
+  fontSize: "15px"
 };
 
 const toggleBtn = {

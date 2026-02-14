@@ -1,38 +1,56 @@
-.App {
-  text-align: center;
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+/* ===== GLOBAL FONT ===== */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  background-color: #f4f6f9;
+}
+
+/* ===== SCROLLBAR (Professional Look) ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ===== SMOOTH TRANSITIONS ===== */
+button,
+.MuiCard-root,
+.MuiPaper-root {
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* ===== MOBILE TABLE FIX ===== */
+@media (max-width: 768px) {
+  .MuiTable-root {
+    font-size: 12px;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* ===== RESPONSIVE UTILITIES ===== */
+.container-padding {
+  padding: 16px;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media (min-width: 768px) {
+  .container-padding {
+    padding: 32px;
   }
 }

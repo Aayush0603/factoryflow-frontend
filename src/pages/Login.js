@@ -1,14 +1,24 @@
 import React, { useState } from "react";
 import axios from "axios";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button
+} from "@mui/material";
 
 const API = process.env.REACT_APP_API_URL;
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     if (e) e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await axios.post(
@@ -17,86 +27,84 @@ function Login() {
       );
 
       sessionStorage.setItem("loggedIn", "true");
-
       sessionStorage.setItem(
         "user",
         JSON.stringify(res.data.admin)
       );
 
       window.location.href = "/";
-
     } catch (err) {
-      console.log("Login Error:", err);
       alert("Invalid credentials");
     }
+
+    setLoading(false);
   };
 
   return (
-    <div style={container}>
-      <div style={card}>
-        <h2 style={{ textAlign: "center", marginBottom: "15px" }}>
-          FactoryFlow Login
-        </h2>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        px: 2,
+        background: "linear-gradient(135deg, #0f172a, #1e293b)"
+      }}
+    >
+      <Card
+        sx={{
+          width: "100%",
+          maxWidth: 400,
+          borderRadius: 3,
+          boxShadow: "0 12px 30px rgba(0,0,0,0.25)"
+        }}
+      >
+        <CardContent>
+          <Typography
+            sx={{
+              fontSize: { xs: "1.5rem", md: "1.7rem" },
+              fontWeight: "bold",
+              textAlign: "center",
+              mb: 3
+            }}
+          >
+            FactoryFlow Login
+          </Typography>
 
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          style={inputStyle}
-        />
+          <TextField
+            fullWidth
+            label="Username"
+            margin="normal"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          style={inputStyle}
-        />
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            margin="normal"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
 
-        <button type="button" onClick={handleLogin} style={btnStyle}>
-          Login
-        </button>
-      </div>
-    </div>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 3,
+              py: 1.2,
+              fontWeight: 600
+            }}
+            onClick={handleLogin}
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </Button>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
-
-/* 🎨 Styles */
-
-const container = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100vh",
-  background: "linear-gradient(135deg, #0f172a, #1e293b)"
-};
-
-const card = {
-  background: "white",
-  padding: "30px",
-  borderRadius: "12px",
-  width: "320px",
-  boxShadow: "0 10px 25px rgba(0,0,0,0.2)"
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px",
-  marginTop: "10px",
-  borderRadius: "6px",
-  border: "1px solid #ccc"
-};
-
-const btnStyle = {
-  width: "100%",
-  padding: "10px",
-  marginTop: "15px",
-  background: "#2563eb",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer"
-};
 
 export default Login;
