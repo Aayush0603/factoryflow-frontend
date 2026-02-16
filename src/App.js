@@ -19,6 +19,9 @@ import AttendanceCalendar from "./pages/AttendanceCalendar";
 import WorkerProfile from "./pages/WorkerProfile";
 import Analytics from "./pages/Analytics";
 import UserManagement from "./pages/UserManagement";
+import Products from "./pages/Products";
+import Machines from "./pages/Machines";
+import AddProductionEntry from "./pages/AddProductionEntry";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
@@ -146,6 +149,9 @@ function App() {
                     <Route path="/calendar" element={<AttendanceCalendar dark={dark} />} />
                     <Route path="/history" element={<AttendanceHistory dark={dark} />} />
                     <Route path="/analytics" element={<Analytics dark={dark} />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/machines" element={<Machines />} />
+                    <Route path="/add-production" element={<AddProductionEntry />} />
                     {user?.role === "admin" && (
                       <>
                         <Route path="/salary" element={<Salary dark={dark} />} />
