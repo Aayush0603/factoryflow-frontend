@@ -46,7 +46,7 @@ const ProductionDashboard = () => {
     labels: machineData.map((m) => m.machineName),
     datasets: [
       {
-        label: "Average Efficiency (%)",
+        label: "Machine Efficiency (%)",
         data: machineData.map((m) => m.avgEfficiency),
       },
     ],
@@ -56,8 +56,18 @@ const ProductionDashboard = () => {
     labels: productEfficiency.map((p) => p.productName),
     datasets: [
       {
-        label: "Efficiency (units/kg)",
+        label: "Product Efficiency (units/kg)",
         data: productEfficiency.map((p) => p.efficiency),
+      },
+    ],
+  };
+
+  const machineRatioChart = {
+    labels: machineEfficiencyRatio.map((m) => m.machineName),
+    datasets: [
+      {
+        label: "Machine Efficiency (units/kg)",
+        data: machineEfficiencyRatio.map((m) => m.efficiency),
       },
     ],
   };
@@ -140,6 +150,13 @@ const ProductionDashboard = () => {
           Machine Efficiency (%)
         </Typography>
         <Bar data={machineChart} />
+      </Box>
+
+      <Box mt={5}>
+        <Typography variant="h6" mb={2}>
+          Machine Efficiency (units/kg)
+        </Typography>
+        <Bar data={machineRatioChart} />
       </Box>
 
       <Box mt={5}>
