@@ -33,6 +33,7 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import HistoryIcon from "@mui/icons-material/History";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import InsightsIcon from "@mui/icons-material/Insights";
+import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 
 function App() {
   const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
@@ -56,12 +57,12 @@ function App() {
                 {/* Sidebar */}
                 <div
                   style={{
-                    width: "200px",
+                    width: "220px",
                     background: "linear-gradient(180deg, #111827, #0f172a)",
                     padding: "18px 14px",
                     display: "flex",
                     flexDirection: "column",
-                    gap: "10px",
+                    gap: "8px",
                     color: "white"
                   }}
                 >
@@ -84,6 +85,7 @@ function App() {
                     </span>
                   </div>
 
+                  {/* Core Modules */}
                   <NavItem to="/" icon={<DashboardIcon />} label="Dashboard" />
                   <NavItem to="/workers" icon={<PeopleIcon />} label="Workers" />
                   <NavItem to="/attendance" icon={<EventAvailableIcon />} label="Attendance" />
@@ -91,8 +93,23 @@ function App() {
                   <NavItem to="/history" icon={<HistoryIcon />} label="History" />
                   <NavItem to="/analytics" icon={<InsightsIcon />} label="Analytics" />
 
+                  {/* Production Section */}
+                  <div style={{ marginTop: "12px", fontSize: "11px", opacity: 0.6 }}>
+                    PRODUCTION
+                  </div>
+
+                  <NavItem to="/production-dashboard" icon={<PrecisionManufacturingIcon />} label="Production Dashboard" />
+                  <NavItem to="/products" icon={<PrecisionManufacturingIcon />} label="Products" />
+                  <NavItem to="/machines" icon={<PrecisionManufacturingIcon />} label="Machines" />
+                  <NavItem to="/add-production" icon={<PrecisionManufacturingIcon />} label="Add Production" />
+
+                  {/* Admin Only */}
                   {user?.role === "admin" && (
                     <>
+                      <div style={{ marginTop: "12px", fontSize: "11px", opacity: 0.6 }}>
+                        ADMIN
+                      </div>
+
                       <NavItem to="/salary" icon={<PaymentsIcon />} label="Salary" />
                       <NavItem to="/add-worker" icon={<PersonAddIcon />} label="Add Worker" />
                       <NavItem to="/users" icon={<PeopleIcon />} label="Users" />
@@ -151,10 +168,13 @@ function App() {
                     <Route path="/calendar" element={<AttendanceCalendar dark={dark} />} />
                     <Route path="/history" element={<AttendanceHistory dark={dark} />} />
                     <Route path="/analytics" element={<Analytics dark={dark} />} />
+
+                    {/* Production Routes */}
                     <Route path="/production-dashboard" element={<ProductionDashboard />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/machines" element={<Machines />} />
                     <Route path="/add-production" element={<AddProductionEntry />} />
+
                     {user?.role === "admin" && (
                       <>
                         <Route path="/salary" element={<Salary dark={dark} />} />
@@ -162,6 +182,7 @@ function App() {
                         <Route path="/users" element={<UserManagement />} />
                       </>
                     )}
+
                     <Route path="/worker/:id" element={<WorkerProfile dark={dark} />} />
                   </Routes>
                 </div>
