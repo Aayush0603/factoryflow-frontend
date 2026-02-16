@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Paper, Grid } from "@mui/material";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import API from "../api";
 
 const ProductionDashboard = () => {
@@ -11,66 +11,46 @@ const ProductionDashboard = () => {
   const [machineEfficiencyRatio, setMachineEfficiencyRatio] = useState([]);
   const [wasteData, setWasteData] = useState([]);
   const [anomalies, setAnomalies] = useState({});
+  const [spcData, setSpcData] = useState([]);
+  const [prediction, setPrediction] = useState(0);
 
   useEffect(() => {
-    API.get("/production/summary/today").then((res) =>
+    API.get("/production/summary/today").then(res =>
       setSummary(res.data)
     );
 
-    API.get("/production/analytics/machine-efficiency").then((res) =>
+    API.get("/production/analytics/machine-efficiency").then(res =>
       setMachineData(res.data)
     );
 
-    API.get("/production/analytics/material-efficiency").then((res) =>
+    API.get("/production/analytics/material-efficiency").then(res =>
       setMaterialStats(res.data)
     );
 
-    API.get("/production/analytics/product-efficiency").then((res) =>
+    API.get("/production/analytics/product-efficiency").then(res =>
       setProductEfficiency(res.data)
     );
 
-    API.get("/production/analytics/machine-efficiency-ratio").then((res) =>
+    API.get("/production/analytics/machine-efficiency-ratio").then(res =>
       setMachineEfficiencyRatio(res.data)
     );
 
-    API.get("/production/analytics/waste-percentage").then((res) =>
+    API.get("/production/analytics/waste-percentage").then(res =>
       setWasteData(res.data)
     );
 
-    API.get("/production/analytics/anomalies").then((res) =>
+    API.get("/production/analytics/anomalies").then(res =>
       setAnomalies(res.data)
     );
+
+    API.get("/production/analytics/spc-efficiency").then(res =>
+      setSpcData(res.data)
+    );
+
+    API.get("/production/analytics/predict-efficiency").then(res =>
+      setPrediction(res.data.prediction)
+    );
   }, []);
-
-  const machineChart = {
-    labels: machineData.map((m) => m.machineName),
-    datasets: [
-      {
-        label: "Machine Efficiency (%)",
-        data: machineData.map((m) => m.avgEfficiency),
-      },
-    ],
-  };
-
-  const productChart = {
-    labels: productEfficiency.map((p) => p.productName),
-    datasets: [
-      {
-        label: "Product Efficiency (units/kg)",
-        data: productEfficiency.map((p) => p.efficiency),
-      },
-    ],
-  };
-
-  const machineRatioChart = {
-    labels: machineEfficiencyRatio.map((m) => m.machineName),
-    datasets: [
-      {
-        label: "Machine Efficiency (units/kg)",
-        data: machineEfficiencyRatio.map((m) => m.efficiency),
-      },
-    ],
-  };
 
   const avgWaste =
     wasteData.length > 0
@@ -80,13 +60,71 @@ const ProductionDashboard = () => {
         ).toFixed(2)
       : 0;
 
+  const machineChart = {
+    labels: machineData.map(m => m.machineName),
+    datasets: [
+      {
+        label: "Machine Efficiency (%)",
+        data: machineData.map(m => m.avgEfficiency)
+      }
+    ]
+  };
+
+  const machineRatioChart = {
+    labels: machineEfficiencyRatio.map(m => m.machineName),
+    datasets: [
+      {
+        label: "Machine Efficiency (units/kg)",
+        data: machineEfficiencyRatio.map(m => m.efficiency)
+      }
+    ]
+  };
+
+  const productChart = {
+    labels: productEfficiency.map(p => p.productName),
+    datasets: [
+      {
+        label: "Product Efficiency (units/kg)",
+        data: productEfficiency.map(p => p.efficiency)
+      }
+    ]
+  };
+
+  const spcChart = {
+    labels: spcData.map(d =>
+      new Date(d.date).toLocaleDateString()
+    ),
+    datasets: [
+      {
+        label: "Efficiency",
+        data: spcData.map(d => d.efficiency),
+        borderWidth: 2
+      },
+      {
+        label: "Mean",
+        data: spcData.map(d => d.mean),
+        borderDash: [5, 5]
+      },
+      {
+        label: "UCL",
+        data: spcData.map(d => d.UCL),
+        borderDash: [3, 3]
+      },
+      {
+        label: "LCL",
+        data: spcData.map(d => d.LCL),
+        borderDash: [3, 3]
+      }
+    ]
+  };
+
   return (
     <Box p={3}>
       <Typography variant="h5" mb={3}>
-        Production Dashboard
+        Production Intelligence Dashboard
       </Typography>
 
-      {/* Summary Cards */}
+      {/* KPI Cards */}
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
           <Paper sx={{ p: 2 }}>
@@ -99,7 +137,7 @@ const ProductionDashboard = () => {
 
         <Grid item xs={12} md={3}>
           <Paper sx={{ p: 2 }}>
-            <Typography>Raw Material Used (kg)</Typography>
+            <Typography>Material Used (kg)</Typography>
             <Typography variant="h6">
               {summary.totalRawMaterial || 0}
             </Typography>
@@ -108,7 +146,7 @@ const ProductionDashboard = () => {
 
         <Grid item xs={12} md={3}>
           <Paper sx={{ p: 2 }}>
-            <Typography>Avg Efficiency (%)</Typography>
+            <Typography>Average Efficiency (%)</Typography>
             <Typography variant="h6">
               {summary.avgEfficiency || 0}
             </Typography>
@@ -117,20 +155,22 @@ const ProductionDashboard = () => {
 
         <Grid item xs={12} md={3}>
           <Paper sx={{ p: 2 }}>
-            <Typography>Material Efficiency</Typography>
+            <Typography>Predicted Next Efficiency</Typography>
             <Typography variant="h6">
-              {materialStats.efficiencyRatio || 0} units/kg
+              {prediction || 0} %
             </Typography>
           </Paper>
         </Grid>
       </Grid>
 
-      {/* Waste + Anomalies */}
+      {/* Waste + Anomaly */}
       <Grid container spacing={3} mt={2}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
-            <Typography>Average Waste Percentage</Typography>
-            <Typography variant="h6">{avgWaste}%</Typography>
+            <Typography>Average Waste %</Typography>
+            <Typography variant="h6">
+              {avgWaste} %
+            </Typography>
           </Paper>
         </Grid>
 
@@ -145,6 +185,13 @@ const ProductionDashboard = () => {
       </Grid>
 
       {/* Charts */}
+      <Box mt={5}>
+        <Typography variant="h6" mb={2}>
+          SPC Control Chart (Efficiency Stability)
+        </Typography>
+        <Line data={spcChart} />
+      </Box>
+
       <Box mt={5}>
         <Typography variant="h6" mb={2}>
           Machine Efficiency (%)
