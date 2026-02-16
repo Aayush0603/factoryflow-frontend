@@ -6,7 +6,6 @@ import API from "../api";
 const ProductionDashboard = () => {
   const [summary, setSummary] = useState({});
   const [machineData, setMachineData] = useState([]);
-  const [materialStats, setMaterialStats] = useState({});
   const [productEfficiency, setProductEfficiency] = useState([]);
   const [machineEfficiencyRatio, setMachineEfficiencyRatio] = useState([]);
   const [wasteData, setWasteData] = useState([]);
@@ -22,11 +21,7 @@ const ProductionDashboard = () => {
     API.get("/production/analytics/machine-efficiency").then(res =>
       setMachineData(res.data)
     );
-
-    API.get("/production/analytics/material-efficiency").then(res =>
-      setMaterialStats(res.data)
-    );
-
+    
     API.get("/production/analytics/product-efficiency").then(res =>
       setProductEfficiency(res.data)
     );
