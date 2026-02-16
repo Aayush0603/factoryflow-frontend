@@ -6,6 +6,7 @@ import API from "../api";
 const ProductionDashboard = () => {
   const [summary, setSummary] = useState({});
   const [machineData, setMachineData] = useState([]);
+  const [materialStats, setMaterialStats] = useState({});
 
   useEffect(() => {
     API.get("/production/summary/today").then((res) =>
@@ -14,6 +15,10 @@ const ProductionDashboard = () => {
 
     API.get("/production/analytics/machine-efficiency").then((res) =>
       setMachineData(res.data)
+    );
+
+    API.get("/production/analytics/material-efficiency").then((res) => 
+      setMaterialStats(res.data)
     );
   }, []);
 
@@ -60,6 +65,15 @@ const ProductionDashboard = () => {
             </Typography>
           </Paper>
         </Grid>
+      </Grid>
+       
+      <Grid item xs={12} md={4}>
+        <Paper sx={{ p: 2 }}>
+          <Typography>Material Efficiency</Typography>
+          <Typography variant="h6">
+            {materialStats.efficiencyRatio || 0} units/kg
+          </Typography>
+        </Paper>
       </Grid>
 
       <Box mt={5}>
