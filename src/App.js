@@ -24,6 +24,7 @@ import Products from "./pages/Products";
 import Machines from "./pages/Machines";
 import AddProductionEntry from "./pages/AddProductionEntry";
 import ProductionDashboard from "./pages/ProductionDashboard";
+import RawMaterials from "./pages/RawMaterials";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
@@ -102,6 +103,7 @@ function App() {
                   <NavItem to="/products" icon={<PrecisionManufacturingIcon />} label="Products" />
                   <NavItem to="/machines" icon={<PrecisionManufacturingIcon />} label="Machines" />
                   <NavItem to="/add-production" icon={<PrecisionManufacturingIcon />} label="Add Production" />
+                  <NavItem to="/raw-materials" icon={<InventoryIcon />} label="Raw Materials" />
 
                   {/* Admin Only */}
                   {user?.role === "admin" && (
@@ -174,7 +176,7 @@ function App() {
                     <Route path="/products" element={<Products />} />
                     <Route path="/machines" element={<Machines />} />
                     <Route path="/add-production" element={<AddProductionEntry />} />
-
+                    <Route path="/raw-materials" element={<RawMaterials />} />
                     {user?.role === "admin" && (
                       <>
                         <Route path="/salary" element={<Salary dark={dark} />} />
