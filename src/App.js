@@ -35,6 +35,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import InsightsIcon from "@mui/icons-material/Insights";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 function App() {
   const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
