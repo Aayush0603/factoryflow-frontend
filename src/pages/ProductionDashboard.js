@@ -121,7 +121,7 @@ const ProductionDashboard = () => {
 
       {/* KPI Cards */}
       <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 2 }}>
             <Typography>Total Production Today</Typography>
             <Typography variant="h6">
