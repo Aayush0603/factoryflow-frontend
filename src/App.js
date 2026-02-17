@@ -25,6 +25,7 @@ import Machines from "./pages/Machines";
 import AddProductionEntry from "./pages/AddProductionEntry";
 import ProductionDashboard from "./pages/ProductionDashboard";
 import RawMaterials from "./pages/RawMaterials";
+import Purchases from "./pages/Purchases";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
@@ -36,6 +37,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import InsightsIcon from "@mui/icons-material/Insights";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 function App() {
   const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
@@ -105,6 +107,7 @@ function App() {
                   <NavItem to="/machines" icon={<PrecisionManufacturingIcon />} label="Machines" />
                   <NavItem to="/add-production" icon={<PrecisionManufacturingIcon />} label="Add Production" />
                   <NavItem to="/raw-materials" icon={<InventoryIcon />} label="Raw Materials" />
+                  <NavItem to="/purchases" icon={<ShoppingCartIcon />} label="Purchases" />
 
                   {/* Admin Only */}
                   {user?.role === "admin" && (
@@ -178,6 +181,7 @@ function App() {
                     <Route path="/machines" element={<Machines />} />
                     <Route path="/add-production" element={<AddProductionEntry />} />
                     <Route path="/raw-materials" element={<RawMaterials />} />
+                    <Route path="/purchases" element={<Purchases />} />
                     {user?.role === "admin" && (
                       <>
                         <Route path="/salary" element={<Salary dark={dark} />} />
