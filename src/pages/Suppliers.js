@@ -11,9 +11,9 @@ import API from "../api";
 const Suppliers = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [form, setForm] = useState({
-    name: "",
-    contactPerson: "",
-    phone: "",
+    companyName: "",
+    supplierName: "",
+    mobile: "",
     email: "",
     address: ""
   });
@@ -30,13 +30,15 @@ const Suppliers = () => {
 
   const handleSubmit = async () => {
     await API.post("/suppliers", form);
+
     setForm({
-      name: "",
-      contactPerson: "",
-      phone: "",
+      companyName: "",
+      supplierName: "",
+      mobile: "",
       email: "",
       address: ""
     });
+
     fetchSuppliers();
   };
 
@@ -46,36 +48,43 @@ const Suppliers = () => {
         Supplier Management
       </Typography>
 
-      <Box display="flex" flexDirection="column" gap={2} width={300}>
-        <TextField label="Supplier Name"
-          value={form.name}
+      <Box display="flex" flexDirection="column" gap={2} width={350}>
+        <TextField
+          label="Company Name"
+          value={form.companyName}
           onChange={(e) =>
-            setForm({ ...form, name: e.target.value })
+            setForm({ ...form, companyName: e.target.value })
           }
         />
 
-        <TextField label="Contact Person"
-          value={form.contactPerson}
+        <TextField
+          label="Supplier Name"
+          value={form.supplierName}
           onChange={(e) =>
-            setForm({ ...form, contactPerson: e.target.value })
+            setForm({ ...form, supplierName: e.target.value })
           }
         />
 
-        <TextField label="Phone"
-          value={form.phone}
+        <TextField
+          label="Mobile Number"
+          value={form.mobile}
           onChange={(e) =>
-            setForm({ ...form, phone: e.target.value })
+            setForm({ ...form, mobile: e.target.value })
           }
         />
 
-        <TextField label="Email"
+        <TextField
+          label="Email"
           value={form.email}
           onChange={(e) =>
             setForm({ ...form, email: e.target.value })
           }
         />
 
-        <TextField label="Address"
+        <TextField
+          label="Address"
+          multiline
+          rows={3}
           value={form.address}
           onChange={(e) =>
             setForm({ ...form, address: e.target.value })
@@ -90,9 +99,11 @@ const Suppliers = () => {
       <Box mt={4}>
         {suppliers.map(s => (
           <Paper key={s._id} sx={{ p: 2, mb: 2 }}>
-            <Typography><b>{s.name}</b></Typography>
-            <Typography>{s.contactPerson}</Typography>
-            <Typography>{s.phone}</Typography>
+            <Typography><b>{s.companyName}</b></Typography>
+            <Typography>Supplier: {s.supplierName}</Typography>
+            <Typography>Mobile: {s.mobile}</Typography>
+            <Typography>Email: {s.email}</Typography>
+            <Typography>Address: {s.address}</Typography>
           </Paper>
         ))}
       </Box>
