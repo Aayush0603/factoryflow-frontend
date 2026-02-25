@@ -8,14 +8,15 @@ function Inquiries() {
     fetchInquiries();
   }, []);
 
-  const fetchInquiries = async () => {
-    try {
-      const res = await API.get("/admin/inquiries");
-      setInquiries(res.data);
-    } catch (error) {
-      console.error("Error fetching inquiries");
-    }
-  };
+ const fetchInquiries = async () => {
+  try {
+    const res = await API.get("/admin/inquiries");
+    console.log("INQUIRIES RESPONSE:", res.data); // 👈 ADD THIS
+    setInquiries(res.data);
+  } catch (error) {
+    console.error("Error fetching inquiries", error);
+  }
+};
 
   return (
     <div style={{ padding: "20px" }}>

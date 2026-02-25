@@ -124,7 +124,7 @@ function App() {
                       <NavItem to="/add-worker" icon={<PersonAddIcon />} label="Add Worker" />
                       <NavItem to="/users" icon={<PeopleIcon />} label="Users" />
                       <NavItem to="/suppliers" icon={<BusinessIcon />} label="Suppliers" />
-                      <NavItem to="/inquires" icon={<AssignmentIcon />} label="Inquiries" />
+                      <NavItem to="/inquiries" icon={<AssignmentIcon />} label="Inquiries" />
                     </>
                   )}
 
