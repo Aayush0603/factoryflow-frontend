@@ -27,6 +27,7 @@ import ProductionDashboard from "./pages/ProductionDashboard";
 import RawMaterials from "./pages/RawMaterials";
 import Purchases from "./pages/Purchases";
 import Suppliers from "./pages/Suppliers";
+import Inquiries from "./pages/Inquiries";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
@@ -40,6 +41,7 @@ import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturi
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BusinessIcon from "@mui/icons-material/Business";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 function App() {
   const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
@@ -122,6 +124,7 @@ function App() {
                       <NavItem to="/add-worker" icon={<PersonAddIcon />} label="Add Worker" />
                       <NavItem to="/users" icon={<PeopleIcon />} label="Users" />
                       <NavItem to="/suppliers" icon={<BusinessIcon />} label="Suppliers" />
+                      <NavItem to="/inquires" icon={<AssignmentIcon />} label="Inquiries" />
                     </>
                   )}
 
@@ -191,6 +194,7 @@ function App() {
                         <Route path="/add-worker" element={<AddWorker dark={dark} />} />
                         <Route path="/users" element={<UserManagement />} />
                         <Route path="/suppliers" element={<Suppliers />} />
+                        <Route path="/inquiries" element={<Inquiries />} />
                       </>
                     )}
 
