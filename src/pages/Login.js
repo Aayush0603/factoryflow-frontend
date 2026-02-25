@@ -12,7 +12,7 @@ import {
 const API = process.env.REACT_APP_API_URL;
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");     // ✅ changed
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -23,14 +23,29 @@ function Login() {
     try {
       const res = await axios.post(
         `${API}/api/auth/login`,
-        { username, password }
+        {
+          email,        // ✅ backend expects email
+          password
+        }
       );
 
+      // ✅ Save login state
       sessionStorage.setItem("loggedIn", "true");
       sessionStorage.setItem(
         "user",
-        JSON.stringify(res.data.admin)
+        JSON.stringify(res.data.user)
       );
+      sessionStorage.setItem(
+        "token",
+        res.data.token
+      );
+
+      // ✅ Optional: ensure only admin can access ERP
+      if (res.data.user.role !== "admin") {
+        alert("Access denied. Not an admin.");
+        sessionStorage.clear();
+        return;
+      }
 
       window.location.href = "/";
     } catch (err) {
@@ -82,15 +97,17 @@ function Login() {
             Sign in to continue
           </Typography>
 
+          {/* ✅ Email Field */}
           <TextField
             fullWidth
             size="small"
-            label="Username"
+            label="Email"
             margin="normal"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
+          {/* ✅ Password Field */}
           <TextField
             fullWidth
             size="small"
@@ -98,7 +115,7 @@ function Login() {
             type="password"
             margin="normal"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <Button
