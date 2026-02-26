@@ -18,28 +18,42 @@ const Suppliers = () => {
     address: ""
   });
 
-  const fetchSuppliers = () => {
-    API.get("/suppliers").then(res =>
-      setSuppliers(res.data)
-    );
-  };
-
   useEffect(() => {
     fetchSuppliers();
   }, []);
 
+  const fetchSuppliers = async () => {
+    try {
+      const res = await API.get("/api/suppliers");
+      setSuppliers(res.data);
+    } catch (error) {
+      console.error("Fetch suppliers error:", error);
+    }
+  };
+
   const handleSubmit = async () => {
-    await API.post("/suppliers", form);
+    if (!form.companyName || !form.supplierName) {
+      alert("Company name and supplier name are required");
+      return;
+    }
 
-    setForm({
-      companyName: "",
-      supplierName: "",
-      mobile: "",
-      email: "",
-      address: ""
-    });
+    try {
+      await API.post("/api/suppliers", form);
 
-    fetchSuppliers();
+      setForm({
+        companyName: "",
+        supplierName: "",
+        mobile: "",
+        email: "",
+        address: ""
+      });
+
+      fetchSuppliers();
+
+    } catch (error) {
+      console.error("Add supplier error:", error);
+      alert(error.response?.data?.message || "Failed to add supplier");
+    }
   };
 
   return (
@@ -97,7 +111,7 @@ const Suppliers = () => {
       </Box>
 
       <Box mt={4}>
-        {suppliers.map(s => (
+        {suppliers.map((s) => (
           <Paper key={s._id} sx={{ p: 2, mb: 2 }}>
             <Typography><b>{s.companyName}</b></Typography>
             <Typography>Supplier: {s.supplierName}</Typography>

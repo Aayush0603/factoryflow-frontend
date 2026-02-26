@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";   // ✅ secured API
 import {
   Card,
   Typography,
@@ -13,8 +13,6 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const API = process.env.REACT_APP_API_URL;
-
 function AttendanceHistory({ dark }) {
   const [data, setData] = useState([]);
 
@@ -22,15 +20,20 @@ function AttendanceHistory({ dark }) {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
-    axios
-      .get(`${API}/api/attendance/history`)
-      .then(res => setData(res.data))
-      .catch(console.error);
+    fetchHistory();
   }, []);
+
+  const fetchHistory = async () => {
+    try {
+      const res = await API.get("/api/attendance/history");
+      setData(res.data);
+    } catch (error) {
+      console.error("Attendance history error:", error);
+    }
+  };
 
   return (
     <>
-      {/* ===== Title ===== */}
       <Typography
         sx={{
           fontSize: { xs: "1.3rem", md: "1.6rem" },
@@ -41,7 +44,6 @@ function AttendanceHistory({ dark }) {
         Attendance History
       </Typography>
 
-      {/* ================= DESKTOP TABLE ================= */}
       {!isMobile && (
         <Card
           sx={{
@@ -77,7 +79,6 @@ function AttendanceHistory({ dark }) {
         </Card>
       )}
 
-      {/* ================= MOBILE CARD VIEW ================= */}
       {isMobile && (
         <Grid container spacing={2}>
           {data.map((r, i) => (

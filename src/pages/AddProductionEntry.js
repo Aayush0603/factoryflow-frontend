@@ -17,7 +17,7 @@ const AddProductionEntry = () => {
   const [form, setForm] = useState({
     productId: "",
     machineId: "",
-    rawMaterialId: "", // ✅ REQUIRED
+    rawMaterialId: "",
     quantityProduced: "",
     rawMaterialUsedKg: "",
     workingHours: "",
@@ -25,16 +25,29 @@ const AddProductionEntry = () => {
   });
 
   useEffect(() => {
-    API.get("/products").then((res) => setProducts(res.data));
-    API.get("/machines").then((res) => setMachines(res.data));
-    API.get("/raw-materials").then((res) =>
-      setRawMaterials(res.data)
-    );
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const [productsRes, machinesRes, rawRes] = await Promise.all([
+        API.get("/api/products"),
+        API.get("/api/machines"),
+        API.get("/api/raw-materials"),
+      ]);
+
+      setProducts(productsRes.data);
+      setMachines(machinesRes.data);
+      setRawMaterials(rawRes.data);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to load dropdown data");
+    }
+  };
 
   const handleSubmit = async () => {
     try {
-      await API.post("/production", {
+      await API.post("/api/production", {
         ...form,
         quantityProduced: Number(form.quantityProduced),
         rawMaterialUsedKg: Number(form.rawMaterialUsedKg),
@@ -43,7 +56,6 @@ const AddProductionEntry = () => {
 
       alert("Production Added Successfully");
 
-      // Reset form
       setForm({
         productId: "",
         machineId: "",
@@ -53,7 +65,6 @@ const AddProductionEntry = () => {
         workingHours: "",
         shift: "Morning",
       });
-
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || "Error adding production");
@@ -68,7 +79,6 @@ const AddProductionEntry = () => {
 
       <Box display="flex" flexDirection="column" gap={2} width={300}>
 
-        {/* Product */}
         <Select
           value={form.productId}
           displayEmpty
@@ -84,7 +94,6 @@ const AddProductionEntry = () => {
           ))}
         </Select>
 
-        {/* Machine */}
         <Select
           value={form.machineId}
           displayEmpty
@@ -100,7 +109,6 @@ const AddProductionEntry = () => {
           ))}
         </Select>
 
-        {/* Raw Material */}
         <Select
           value={form.rawMaterialId}
           displayEmpty

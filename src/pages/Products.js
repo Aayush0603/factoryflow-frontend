@@ -21,24 +21,48 @@ const Products = () => {
     standardOutputPerHour: "",
   });
 
-  const fetchProducts = async () => {
-    const res = await API.get("/products");
-    setProducts(res.data);
-  };
-
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  const fetchProducts = async () => {
+    try {
+      const res = await API.get("/api/products");
+      setProducts(res.data);
+    } catch (error) {
+      console.error("Fetch products error:", error);
+    }
+  };
+
   const handleSubmit = async () => {
-    await API.post("/products", form);
-    setForm({ name: "", category: "", standardOutputPerHour: "" });
-    fetchProducts();
+    try {
+      await API.post("/api/products", {
+        ...form,
+        standardOutputPerHour: Number(form.standardOutputPerHour),
+      });
+
+      setForm({
+        name: "",
+        category: "",
+        standardOutputPerHour: "",
+      });
+
+      fetchProducts();
+
+    } catch (error) {
+      console.error("Add product error:", error);
+      alert(error.response?.data?.message || "Failed to add product");
+    }
   };
 
   const handleDelete = async (id) => {
-    await API.delete(`/products/${id}`);
-    fetchProducts();
+    try {
+      await API.delete(`/api/products/${id}`);
+      fetchProducts();
+    } catch (error) {
+      console.error("Delete product error:", error);
+      alert("Failed to delete product");
+    }
   };
 
   return (

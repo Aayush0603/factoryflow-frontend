@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Button,
   Box,
@@ -13,12 +12,11 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
+import API from "../api";
 
 const DataGrid = React.lazy(() =>
   import("@mui/x-data-grid").then(mod => ({ default: mod.DataGrid }))
 );
-
-const API = process.env.REACT_APP_API_URL;
 
 function Workers({ dark }) {
   const [workers, setWorkers] = useState([]);
@@ -28,27 +26,42 @@ function Workers({ dark }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const fetchWorkers = () => {
-    axios
-      .get(`${API}/api/workers`)
-      .then(res => {
-        const formatted = res.data.map(w => ({ ...w, id: w._id }));
-        setWorkers(formatted);
-      })
-      .catch(console.error);
-  };
-
   useEffect(() => {
     fetchWorkers();
   }, []);
 
+  const fetchWorkers = async () => {
+    try {
+      const res = await API.get("/api/workers");
+      const formatted = res.data.map(w => ({ ...w, id: w._id }));
+      setWorkers(formatted);
+    } catch (error) {
+      console.error("Fetch workers error:", error);
+    }
+  };
+
   const deleteWorker = async (id) => {
     try {
-      await axios.delete(`${API}/api/workers/${id}`);
+      await API.delete(`/api/workers/${id}`);
       fetchWorkers();
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Delete worker error:", error);
       alert("Failed to delete worker");
+    }
+  };
+
+  const updateWorker = async () => {
+    try {
+      await API.put(`/api/workers/${editingWorker._id}`, {
+        ...editingWorker,
+        salaryAmount: Number(editingWorker.salaryAmount)
+      });
+
+      setEditingWorker(null);
+      fetchWorkers();
+    } catch (error) {
+      console.error("Update worker error:", error);
+      alert("Failed to update worker");
     }
   };
 
@@ -94,7 +107,6 @@ function Workers({ dark }) {
 
   return (
     <>
-      {/* ===== Title ===== */}
       <Typography
         sx={{
           fontSize: { xs: "1.4rem", md: "1.8rem" },
@@ -105,7 +117,6 @@ function Workers({ dark }) {
         Workers Management
       </Typography>
 
-      {/* ===== Desktop Table ===== */}
       {!isMobile && (
         <Box sx={{ height: 420, width: "100%" }}>
           <React.Suspense fallback={<div>Loading table...</div>}>
@@ -123,7 +134,6 @@ function Workers({ dark }) {
         </Box>
       )}
 
-      {/* ===== Mobile Cards ===== */}
       {isMobile && (
         <Grid container spacing={2}>
           {workers.map(worker => (
@@ -184,7 +194,6 @@ function Workers({ dark }) {
         </Grid>
       )}
 
-      {/* ===== Edit Form ===== */}
       {editingWorker && (
         <Card
           sx={{
@@ -259,22 +268,7 @@ function Workers({ dark }) {
           </Grid>
 
           <Box mt={2}>
-            <Button
-              variant="contained"
-              onClick={async () => {
-                try {
-                  await axios.put(
-                    `${API}/api/workers/${editingWorker._id}`,
-                    editingWorker
-                  );
-                  setEditingWorker(null);
-                  fetchWorkers();
-                } catch (err) {
-                  console.error(err);
-                  alert("Failed to update worker");
-                }
-              }}
-            >
+            <Button variant="contained" onClick={updateWorker}>
               Save Changes
             </Button>
           </Box>

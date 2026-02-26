@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";   // ✅ secured API
 import {
   Card,
   Typography,
@@ -20,8 +20,6 @@ import {
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const API = process.env.REACT_APP_API_URL;
-
 function Analytics({ dark }) {
   const [monthly, setMonthly] = useState({});
   const [topWorkers, setTopWorkers] = useState([]);
@@ -32,22 +30,33 @@ function Analytics({ dark }) {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
-    axios.get(`${API}/api/analytics/monthly-attendance`)
-      .then(r => setMonthly(r.data))
-      .catch(console.error);
-
-    axios.get(`${API}/api/analytics/top-workers`)
-      .then(r => setTopWorkers(r.data))
-      .catch(console.error);
-
-    axios.get(`${API}/api/analytics/overtime-cost`)
-      .then(r => setOtCost(r.data.totalOTPay))
-      .catch(console.error);
-
-    axios.get(`${API}/api/analytics/absent-alert`)
-      .then(r => setAlerts(r.data))
-      .catch(() => setAlerts([]));
+    fetchAnalytics();
   }, []);
+
+  const fetchAnalytics = async () => {
+    try {
+      const [
+        monthlyRes,
+        topRes,
+        otRes,
+        alertRes
+      ] = await Promise.all([
+        API.get("/api/analytics/monthly-attendance"),
+        API.get("/api/analytics/top-workers"),
+        API.get("/api/analytics/overtime-cost"),
+        API.get("/api/analytics/absent-alert")
+      ]);
+
+      setMonthly(monthlyRes.data);
+      setTopWorkers(topRes.data);
+      setOtCost(otRes.data.totalOTPay);
+      setAlerts(alertRes.data);
+
+    } catch (error) {
+      console.error("Analytics error:", error);
+      setAlerts([]);
+    }
+  };
 
   const chartData = {
     labels: Object.keys(monthly),
@@ -62,7 +71,6 @@ function Analytics({ dark }) {
 
   return (
     <>
-      {/* ===== Title ===== */}
       <Typography
         sx={{
           fontSize: { xs: "1.5rem", md: "1.9rem" },
@@ -73,7 +81,6 @@ function Analytics({ dark }) {
         Factory Analytics Dashboard
       </Typography>
 
-      {/* ===== Summary Cards ===== */}
       <Grid container spacing={2} mb={2}>
         <Grid item xs={12} md={4}>
           <Card sx={summaryCard("#f97316")}>
@@ -103,7 +110,6 @@ function Analytics({ dark }) {
         </Grid>
       </Grid>
 
-      {/* ===== Panels ===== */}
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Card sx={panelCard(dark)}>

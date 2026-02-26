@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";   // ✅ secured API
 import {
   Card,
   Typography,
@@ -24,8 +24,6 @@ ChartJS.register(
   Legend
 );
 
-const API = process.env.REACT_APP_API_URL;
-
 function Dashboard({ dark }) {
   const [stats, setStats] = useState({
     totalWorkers: 0,
@@ -34,10 +32,17 @@ function Dashboard({ dark }) {
   });
 
   useEffect(() => {
-    axios.get(`${API}/api/dashboard`).then(res => {
-      setStats(res.data);
-    });
+    fetchDashboard();
   }, []);
+
+  const fetchDashboard = async () => {
+    try {
+      const res = await API.get("/api/dashboard");
+      setStats(res.data);
+    } catch (error) {
+      console.error("Dashboard error:", error);
+    }
+  };
 
   const chartData = {
     labels: ["Workers", "Present", "Completed"],
@@ -56,7 +61,6 @@ function Dashboard({ dark }) {
 
   return (
     <>
-      {/* ===== Page Title ===== */}
       <Typography
         sx={{
           fontSize: { xs: "1.4rem", md: "1.8rem" },
@@ -67,7 +71,6 @@ function Dashboard({ dark }) {
         Factory Dashboard
       </Typography>
 
-      {/* ===== Stat Cards ===== */}
       <Grid container spacing={2} mb={2}>
         <StatCard
           title="Total Workers"
@@ -89,7 +92,6 @@ function Dashboard({ dark }) {
         />
       </Grid>
 
-      {/* ===== Chart Section ===== */}
       <Card
         sx={{
           borderRadius: 3,

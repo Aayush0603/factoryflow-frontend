@@ -24,8 +24,12 @@ const Machines = () => {
   });
 
   const fetchMachines = async () => {
-    const res = await API.get("/machines");
-    setMachines(res.data);
+    try {
+      const res = await API.get("/api/machines");
+      setMachines(res.data);
+    } catch (error) {
+      console.error("Fetch machines error:", error);
+    }
   };
 
   useEffect(() => {
@@ -33,14 +37,29 @@ const Machines = () => {
   }, []);
 
   const handleSubmit = async () => {
-    await API.post("/machines", form);
-    setForm({ name: "", type: "", capacityPerHour: "" });
-    fetchMachines();
+    try {
+      await API.post("/api/machines", {
+        ...form,
+        capacityPerHour: Number(form.capacityPerHour),
+      });
+
+      setForm({ name: "", type: "", capacityPerHour: "" });
+      fetchMachines();
+
+    } catch (error) {
+      console.error("Add machine error:", error);
+      alert(error.response?.data?.message || "Failed to add machine");
+    }
   };
 
   const updateStatus = async (id, status) => {
-    await API.patch(`/machines/${id}`, { status });
-    fetchMachines();
+    try {
+      await API.patch(`/api/machines/${id}`, { status });
+      fetchMachines();
+    } catch (error) {
+      console.error("Update status error:", error);
+      alert("Failed to update machine status");
+    }
   };
 
   return (

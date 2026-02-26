@@ -18,14 +18,18 @@ const RawMaterials = () => {
     costPerUnit: ""
   });
 
-  const fetchMaterials = () => {
-    API.get("/raw-materials")
-      .then(res => setMaterials(res.data));
-  };
-
   useEffect(() => {
     fetchMaterials();
   }, []);
+
+  const fetchMaterials = async () => {
+    try {
+      const res = await API.get("/api/raw-materials");
+      setMaterials(res.data);
+    } catch (error) {
+      console.error("Fetch raw materials error:", error);
+    }
+  };
 
   const handleChange = (e) => {
     setForm({
@@ -37,21 +41,27 @@ const RawMaterials = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await API.post("/raw-materials", {
-      ...form,
-      currentStock: Number(form.currentStock),
-      minimumStock: Number(form.minimumStock),
-      costPerUnit: Number(form.costPerUnit)
-    });
+    try {
+      await API.post("/api/raw-materials", {
+        ...form,
+        currentStock: Number(form.currentStock),
+        minimumStock: Number(form.minimumStock),
+        costPerUnit: Number(form.costPerUnit)
+      });
 
-    setForm({
-      name: "",
-      currentStock: "",
-      minimumStock: "",
-      costPerUnit: ""
-    });
+      setForm({
+        name: "",
+        currentStock: "",
+        minimumStock: "",
+        costPerUnit: ""
+      });
 
-    fetchMaterials();
+      fetchMaterials();
+
+    } catch (error) {
+      console.error("Add raw material error:", error);
+      alert(error.response?.data?.message || "Failed to add raw material");
+    }
   };
 
   return (
@@ -132,7 +142,7 @@ const RawMaterials = () => {
         <Paper key={mat._id} sx={{ p: 2, mb: 2 }}>
           <Typography><b>{mat.name}</b></Typography>
           <Typography>
-            Stock: {mat.currentStock} {mat.unit}
+            Stock: {mat.currentStock} {mat.unit || "kg"}
           </Typography>
           <Typography>
             Status:{" "}

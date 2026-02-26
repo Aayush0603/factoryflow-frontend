@@ -14,38 +14,44 @@ const ProductionDashboard = () => {
   const [prediction, setPrediction] = useState(0);
 
   useEffect(() => {
-    API.get("/production/summary/today").then(res =>
-      setSummary(res.data)
-    );
-
-    API.get("/production/analytics/machine-efficiency").then(res =>
-      setMachineData(res.data)
-    );
-    
-    API.get("/production/analytics/product-efficiency").then(res =>
-      setProductEfficiency(res.data)
-    );
-
-    API.get("/production/analytics/machine-efficiency-ratio").then(res =>
-      setMachineEfficiencyRatio(res.data)
-    );
-
-    API.get("/production/analytics/waste-percentage").then(res =>
-      setWasteData(res.data)
-    );
-
-    API.get("/production/analytics/anomalies").then(res =>
-      setAnomalies(res.data)
-    );
-
-    API.get("/production/analytics/spc-efficiency").then(res =>
-      setSpcData(res.data)
-    );
-
-    API.get("/production/analytics/predict-efficiency").then(res =>
-      setPrediction(res.data.prediction)
-    );
+    fetchProductionData();
   }, []);
+
+  const fetchProductionData = async () => {
+    try {
+      const [
+        summaryRes,
+        machineRes,
+        productRes,
+        machineRatioRes,
+        wasteRes,
+        anomalyRes,
+        spcRes,
+        predictionRes
+      ] = await Promise.all([
+        API.get("/api/production/summary/today"),
+        API.get("/api/production/analytics/machine-efficiency"),
+        API.get("/api/production/analytics/product-efficiency"),
+        API.get("/api/production/analytics/machine-efficiency-ratio"),
+        API.get("/api/production/analytics/waste-percentage"),
+        API.get("/api/production/analytics/anomalies"),
+        API.get("/api/production/analytics/spc-efficiency"),
+        API.get("/api/production/analytics/predict-efficiency")
+      ]);
+
+      setSummary(summaryRes.data);
+      setMachineData(machineRes.data);
+      setProductEfficiency(productRes.data);
+      setMachineEfficiencyRatio(machineRatioRes.data);
+      setWasteData(wasteRes.data);
+      setAnomalies(anomalyRes.data);
+      setSpcData(spcRes.data);
+      setPrediction(predictionRes.data.prediction);
+
+    } catch (error) {
+      console.error("Production dashboard error:", error);
+    }
+  };
 
   const avgWaste =
     wasteData.length > 0
@@ -119,9 +125,8 @@ const ProductionDashboard = () => {
         Production Intelligence Dashboard
       </Typography>
 
-      {/* KPI Cards */}
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid item xs={12} md={4}>
           <Paper sx={{ p: 2 }}>
             <Typography>Total Production Today</Typography>
             <Typography variant="h6">
@@ -158,7 +163,6 @@ const ProductionDashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Waste + Anomaly */}
       <Grid container spacing={3} mt={2}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
@@ -179,7 +183,6 @@ const ProductionDashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Charts */}
       <Box mt={5}>
         <Typography variant="h6" mb={2}>
           SPC Control Chart (Efficiency Stability)

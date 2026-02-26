@@ -22,20 +22,22 @@ const Purchases = () => {
   });
 
   useEffect(() => {
-    fetchSuppliers();
-    fetchRawMaterials();
+    fetchInitialData();
   }, []);
 
-  const fetchSuppliers = () => {
-    API.get("/suppliers")
-      .then(res => setSuppliers(res.data))
-      .catch(err => console.error("Supplier fetch error:", err));
-  };
+  const fetchInitialData = async () => {
+    try {
+      const [supplierRes, rawMaterialRes] = await Promise.all([
+        API.get("/api/suppliers"),
+        API.get("/api/raw-materials")
+      ]);
 
-  const fetchRawMaterials = () => {
-    API.get("/raw-materials")
-      .then(res => setRawMaterials(res.data))
-      .catch(err => console.error("Raw material fetch error:", err));
+      setSuppliers(supplierRes.data);
+      setRawMaterials(rawMaterialRes.data);
+
+    } catch (error) {
+      console.error("Initial purchase load error:", error);
+    }
   };
 
   const handleSubmit = async () => {
@@ -45,7 +47,7 @@ const Purchases = () => {
     }
 
     try {
-      await API.post("/purchases", {
+      await API.post("/api/purchases", {
         ...form,
         quantity: Number(form.quantity),
         pricePerUnit: Number(form.pricePerUnit)
@@ -53,7 +55,6 @@ const Purchases = () => {
 
       alert("Purchase Added Successfully");
 
-      // Reset form
       setForm({
         supplierId: "",
         rawMaterialId: "",
@@ -63,8 +64,8 @@ const Purchases = () => {
       });
 
     } catch (error) {
-      console.error("Purchase Error:", error);
-      alert("Error adding purchase");
+      console.error("Purchase error:", error);
+      alert(error.response?.data?.message || "Error adding purchase");
     }
   };
 
@@ -81,12 +82,12 @@ const Purchases = () => {
 
       <Box display="flex" flexDirection="column" gap={2} width={350}>
         
-        {/* Supplier Select */}
         <Select
           value={form.supplierId}
           onChange={(e) =>
             setForm({ ...form, supplierId: e.target.value })
           }
+          displayEmpty
         >
           <MenuItem value="">Select Supplier</MenuItem>
           {suppliers.map((s) => (
@@ -96,12 +97,12 @@ const Purchases = () => {
           ))}
         </Select>
 
-        {/* Raw Material Select */}
         <Select
           value={form.rawMaterialId}
           onChange={(e) =>
             setForm({ ...form, rawMaterialId: e.target.value })
           }
+          displayEmpty
         >
           <MenuItem value="">Select Raw Material</MenuItem>
           {rawMaterials.map((r) => (
@@ -111,7 +112,6 @@ const Purchases = () => {
           ))}
         </Select>
 
-        {/* Quantity */}
         <TextField
           label="Quantity"
           type="number"
@@ -121,7 +121,6 @@ const Purchases = () => {
           }
         />
 
-        {/* Price Per Unit */}
         <TextField
           label="Price Per Unit"
           type="number"
@@ -131,14 +130,12 @@ const Purchases = () => {
           }
         />
 
-        {/* Auto Total */}
         <TextField
           label="Total Amount"
           value={totalAmount}
           InputProps={{ readOnly: true }}
         />
 
-        {/* Payment Status */}
         <Select
           value={form.paymentStatus}
           onChange={(e) =>
@@ -149,7 +146,6 @@ const Purchases = () => {
           <MenuItem value="Pending">Pending</MenuItem>
         </Select>
 
-        {/* Submit */}
         <Button variant="contained" onClick={handleSubmit}>
           Submit
         </Button>

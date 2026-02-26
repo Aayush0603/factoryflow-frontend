@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
-import axios from "axios";
+import API from "../api";   // ✅ secured API
 import {
   Card,
   Typography,
@@ -16,8 +16,6 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const API = process.env.REACT_APP_API_URL;
-
 function AttendanceCalendar({ dark }) {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
@@ -29,25 +27,31 @@ function AttendanceCalendar({ dark }) {
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
-    axios
-      .get(`${API}/api/attendance/history`)
-      .then(res => {
-        setRecords(res.data);
-
-        const grouped = {};
-        res.data.forEach(r => {
-          grouped[r.date] = (grouped[r.date] || 0) + 1;
-        });
-
-        const formatted = Object.keys(grouped).map(date => ({
-          date,
-          count: grouped[date]
-        }));
-
-        setData(formatted);
-      })
-      .catch(console.error);
+    fetchAttendanceHistory();
   }, []);
+
+  const fetchAttendanceHistory = async () => {
+    try {
+      const res = await API.get("/api/attendance/history");
+
+      setRecords(res.data);
+
+      const grouped = {};
+      res.data.forEach(r => {
+        grouped[r.date] = (grouped[r.date] || 0) + 1;
+      });
+
+      const formatted = Object.keys(grouped).map(date => ({
+        date,
+        count: grouped[date]
+      }));
+
+      setData(formatted);
+
+    } catch (error) {
+      console.error("Attendance history error:", error);
+    }
+  };
 
   const dayRecords = useMemo(
     () => records.filter(r => r.date === selectedDate),
@@ -66,7 +70,6 @@ function AttendanceCalendar({ dark }) {
         Attendance Overview
       </Typography>
 
-      {/* ===== Heatmap Card ===== */}
       <Card
         sx={{
           borderRadius: 3,
@@ -93,7 +96,6 @@ function AttendanceCalendar({ dark }) {
         </Box>
       </Card>
 
-      {/* ===== Modal ===== */}
       <Modal
         open={Boolean(selectedDate)}
         onClose={() => setSelectedDate(null)}
@@ -123,7 +125,6 @@ function AttendanceCalendar({ dark }) {
             </Typography>
           )}
 
-          {/* Desktop Table */}
           {!isMobile && dayRecords.length > 0 && (
             <Table size="small">
               <TableHead>
@@ -147,7 +148,6 @@ function AttendanceCalendar({ dark }) {
             </Table>
           )}
 
-          {/* Mobile Cards */}
           {isMobile && dayRecords.length > 0 &&
             dayRecords.map((r, i) => (
               <Card

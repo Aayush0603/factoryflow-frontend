@@ -21,19 +21,53 @@ const ProductionTargets = () => {
   });
 
   useEffect(() => {
-    API.get("/products").then(res => setProducts(res.data));
-    fetchTargets();
+    fetchInitialData();
   }, []);
 
-  const fetchTargets = () => {
-    API.get("/targets/achievement").then(res =>
-      setTargets(res.data)
-    );
+  const fetchInitialData = async () => {
+    try {
+      const [productRes, targetRes] = await Promise.all([
+        API.get("/api/products"),
+        API.get("/api/targets/achievement")
+      ]);
+
+      setProducts(productRes.data);
+      setTargets(targetRes.data);
+
+    } catch (error) {
+      console.error("Production targets load error:", error);
+    }
+  };
+
+  const fetchTargets = async () => {
+    try {
+      const res = await API.get("/api/targets/achievement");
+      setTargets(res.data);
+    } catch (error) {
+      console.error("Fetch targets error:", error);
+    }
   };
 
   const handleSubmit = async () => {
-    await API.post("/targets", form);
-    fetchTargets();
+    try {
+      await API.post("/api/targets", {
+        ...form,
+        targetQuantity: Number(form.targetQuantity)
+      });
+
+      setForm({
+        productId: "",
+        targetQuantity: "",
+        targetDate: "",
+        type: "Daily"
+      });
+
+      fetchTargets();
+
+    } catch (error) {
+      console.error("Add target error:", error);
+      alert(error.response?.data?.message || "Failed to add target");
+    }
   };
 
   return (
@@ -48,6 +82,7 @@ const ProductionTargets = () => {
           onChange={(e) =>
             setForm({ ...form, productId: e.target.value })
           }
+          displayEmpty
         >
           <MenuItem value="">Select Product</MenuItem>
           {products.map(p => (
@@ -60,6 +95,7 @@ const ProductionTargets = () => {
         <TextField
           label="Target Quantity"
           type="number"
+          value={form.targetQuantity}
           onChange={(e) =>
             setForm({ ...form, targetQuantity: e.target.value })
           }
@@ -67,6 +103,7 @@ const ProductionTargets = () => {
 
         <TextField
           type="date"
+          value={form.targetDate}
           onChange={(e) =>
             setForm({ ...form, targetDate: e.target.value })
           }
@@ -94,9 +131,11 @@ const ProductionTargets = () => {
           <Typography>Actual: {t.actual}</Typography>
           <Typography>
             Achievement:{" "}
-            <span style={{
-              color: t.achievement < 80 ? "red" : "green"
-            }}>
+            <span
+              style={{
+                color: t.achievement < 80 ? "red" : "green"
+              }}
+            >
               {t.achievement} %
             </span>
           </Typography>

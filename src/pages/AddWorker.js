@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../api";   // ✅ Use secured API
 import {
   Card,
   CardContent,
@@ -9,8 +9,6 @@ import {
   MenuItem,
   Box
 } from "@mui/material";
-
-const API = process.env.REACT_APP_API_URL;
 
 function AddWorker() {
   const [worker, setWorker] = useState({
@@ -22,7 +20,11 @@ function AddWorker() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post(`${API}/api/workers`, worker);
+      await API.post("/api/workers", {
+        ...worker,
+        salaryAmount: Number(worker.salaryAmount)
+      });
+
       alert("Worker Added Successfully 🎉");
 
       setWorker({
@@ -31,9 +33,10 @@ function AddWorker() {
         salaryType: "daily",
         salaryAmount: ""
       });
+
     } catch (error) {
       console.error(error);
-      alert("Error adding worker");
+      alert(error.response?.data?.message || "Error adding worker");
     }
   };
 

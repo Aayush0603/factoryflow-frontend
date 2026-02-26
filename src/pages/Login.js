@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../api";   // ✅ use centralized API
 import {
   Box,
   Card,
@@ -9,10 +9,8 @@ import {
   Button
 } from "@mui/material";
 
-const API = process.env.REACT_APP_API_URL;
-
 function Login() {
-  const [email, setEmail] = useState("");     // ✅ changed
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,15 +19,12 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        `${API}/api/auth/login`,
-        {
-          email,        // ✅ backend expects email
-          password
-        }
-      );
+      const res = await API.post("/api/auth/login", {
+        email,
+        password
+      });
 
-      // ✅ Save login state
+      // Save token + user
       sessionStorage.setItem("loggedIn", "true");
       sessionStorage.setItem(
         "user",
@@ -40,16 +35,20 @@ function Login() {
         res.data.token
       );
 
-      // ✅ Optional: ensure only admin can access ERP
+      // Restrict ERP to admin only
       if (res.data.user.role !== "admin") {
         alert("Access denied. Not an admin.");
         sessionStorage.clear();
+        setLoading(false);
         return;
       }
 
       window.location.href = "/";
+
     } catch (err) {
-      alert("Invalid credentials");
+      alert(
+        err.response?.data?.message || "Invalid credentials"
+      );
     }
 
     setLoading(false);
@@ -97,7 +96,6 @@ function Login() {
             Sign in to continue
           </Typography>
 
-          {/* ✅ Email Field */}
           <TextField
             fullWidth
             size="small"
@@ -107,7 +105,6 @@ function Login() {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          {/* ✅ Password Field */}
           <TextField
             fullWidth
             size="small"

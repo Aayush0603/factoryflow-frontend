@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";   // ✅ Use secured API
 import {
   Box,
   Typography,
@@ -15,12 +15,11 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const API = process.env.REACT_APP_API_URL;
-
 function UserManagement({ dark }) {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState({
-    username: "",
+    name: "",
+    email: "",
     password: "",
     role: "supervisor"
   });
@@ -28,33 +27,43 @@ function UserManagement({ dark }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const fetchUsers = () => {
-    axios
-      .get(`${API}/api/auth/users`)
-      .then(res => setUsers(res.data))
-      .catch(console.error);
+  // ✅ Fetch users (Protected route)
+  const fetchUsers = async () => {
+    try {
+      const res = await API.get("/api/auth/users");
+      setUsers(res.data);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to fetch users");
+    }
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
+  // ✅ Create user (using unified signup route)
   const createUser = async () => {
     try {
-      await axios.post(
-        `${API}/api/auth/create-supervisor`,
-        form
-      );
-      setForm({ username: "", password: "", role: "supervisor" });
+      await API.post("/api/auth/signup", form);
+
+      setForm({
+        name: "",
+        email: "",
+        password: "",
+        role: "supervisor"
+      });
+
       fetchUsers();
     } catch (err) {
       alert("Failed to create user");
     }
   };
 
+  // ✅ Delete user
   const deleteUser = async (id) => {
     try {
-      await axios.delete(`${API}/api/auth/users/${id}`);
+      await API.delete(`/api/auth/users/${id}`);
       fetchUsers();
     } catch (err) {
       alert("Failed to delete user");
@@ -84,7 +93,7 @@ function UserManagement({ dark }) {
         }}
       >
         <Typography variant="subtitle1" mb={2}>
-          Create Supervisor
+          Create User
         </Typography>
 
         <Box
@@ -97,10 +106,20 @@ function UserManagement({ dark }) {
           <TextField
             fullWidth
             size="small"
-            label="Username"
-            value={form.username}
+            label="Name"
+            value={form.name}
             onChange={e =>
-              setForm({ ...form, username: e.target.value })
+              setForm({ ...form, name: e.target.value })
+            }
+          />
+
+          <TextField
+            fullWidth
+            size="small"
+            label="Email"
+            value={form.email}
+            onChange={e =>
+              setForm({ ...form, email: e.target.value })
             }
           />
 
@@ -138,12 +157,12 @@ function UserManagement({ dark }) {
           All Users
         </Typography>
 
-        {/* Desktop Table */}
         {!isMobile && (
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell><b>Username</b></TableCell>
+                <TableCell><b>Name</b></TableCell>
+                <TableCell><b>Email</b></TableCell>
                 <TableCell><b>Role</b></TableCell>
                 <TableCell><b>Action</b></TableCell>
               </TableRow>
@@ -152,7 +171,8 @@ function UserManagement({ dark }) {
             <TableBody>
               {users.map(user => (
                 <TableRow key={user._id}>
-                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell>
                     {user.role !== "admin" && (
@@ -171,7 +191,6 @@ function UserManagement({ dark }) {
           </Table>
         )}
 
-        {/* Mobile Cards */}
         {isMobile &&
           users.map(user => (
             <Card
@@ -184,7 +203,11 @@ function UserManagement({ dark }) {
               }}
             >
               <Typography fontWeight="bold">
-                {user.username}
+                {user.name}
+              </Typography>
+
+              <Typography variant="body2">
+                {user.email}
               </Typography>
 
               <Typography variant="body2" mb={1}>

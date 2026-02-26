@@ -8,15 +8,16 @@ function Inquiries() {
     fetchInquiries();
   }, []);
 
- const fetchInquiries = async () => {
-  try {
-    const res = await API.get("/admin/inquiries");
-    console.log("INQUIRIES RESPONSE:", res.data); // 👈 ADD THIS
-    setInquiries(res.data);
-  } catch (error) {
-    console.error("Error fetching inquiries", error);
-  }
-};
+  const fetchInquiries = async () => {
+    try {
+      // ✅ Adjust this route if needed based on backend
+      const res = await API.get("/api/public/admin/inquiries");
+
+      setInquiries(res.data);
+    } catch (error) {
+      console.error("Error fetching inquiries:", error);
+    }
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -39,9 +40,13 @@ function Inquiries() {
               <td>{inq.name}</td>
               <td>{inq.email}</td>
               <td>{inq.phone}</td>
-              <td>{inq.product?.name}</td>
+              <td>{inq.product?.name || "-"}</td>
               <td>{inq.quantity}</td>
-              <td>{new Date(inq.createdAt).toLocaleDateString()}</td>
+              <td>
+                {inq.createdAt
+                  ? new Date(inq.createdAt).toLocaleDateString()
+                  : "-"}
+              </td>
             </tr>
           ))}
         </tbody>

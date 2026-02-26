@@ -15,9 +15,7 @@ import {
   useMediaQuery
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import axios from "axios";
-
-const API = process.env.REACT_APP_API_URL;
+import API from "../api";
 
 function Salary({ dark }) {
   const [month, setMonth] = useState("2026-01");
@@ -28,16 +26,32 @@ function Salary({ dark }) {
 
   const fetchSalary = async () => {
     try {
-      const res = await axios.get(`${API}/api/salary/${month}`);
+      const res = await API.get(`/api/salary/${month}`);
       setData(res.data);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to fetch salary data");
+    } catch (error) {
+      console.error("Salary fetch error:", error);
+      alert(error.response?.data?.message || "Failed to fetch salary data");
     }
   };
 
-  const downloadReport = () => {
-    window.open(`${API}/api/salary-report/${month}`);
+  const downloadReport = async () => {
+    try {
+      const res = await API.get(`/api/salary-report/${month}`, {
+        responseType: "blob"
+      });
+
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `salary-report-${month}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Failed to download report");
+    }
   };
 
   return (
@@ -49,7 +63,6 @@ function Salary({ dark }) {
         background: dark ? "#1e293b" : "white"
       }}
     >
-      {/* ===== Title ===== */}
       <Typography
         sx={{
           fontSize: { xs: "1.4rem", md: "1.8rem" },
@@ -60,7 +73,6 @@ function Salary({ dark }) {
         Monthly Salary Report
       </Typography>
 
-      {/* ===== Controls ===== */}
       <Box
         sx={{
           display: "flex",
@@ -97,7 +109,6 @@ function Salary({ dark }) {
         </Button>
       </Box>
 
-      {/* ===== Desktop Table ===== */}
       {!isMobile && (
         <Paper sx={{ overflowX: "auto" }}>
           <Table size="small">
@@ -137,7 +148,6 @@ function Salary({ dark }) {
         </Paper>
       )}
 
-      {/* ===== Mobile Card View ===== */}
       {isMobile && (
         <Grid container spacing={2}>
           {data.map((w, i) => (

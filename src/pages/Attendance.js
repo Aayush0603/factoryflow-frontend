@@ -8,9 +8,7 @@ import {
   Box,
   FormControl,
 } from "@mui/material";
-import axios from "axios";
-
-const API = process.env.REACT_APP_API_URL;
+import API from "../api";   // ✅ secured API
 
 function Attendance({ dark }) {
   const [workers, setWorkers] = useState([]);
@@ -20,40 +18,57 @@ function Attendance({ dark }) {
 
   /* ===== Fetch Workers ===== */
   useEffect(() => {
-    axios
-      .get(`${API}/api/workers`)
-      .then(res => setWorkers(res.data))
-      .catch(console.error);
+    const fetchWorkers = async () => {
+      try {
+        const res = await API.get("/api/workers");
+        setWorkers(res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchWorkers();
   }, []);
 
   /* ===== Fetch Today Status ===== */
   useEffect(() => {
-    if (selectedWorker) {
-      axios
-        .get(`${API}/api/attendance/status/${selectedWorker}`)
-        .then(res => setStatus(res.data.status))
-        .catch(console.error);
-    }
+    const fetchStatus = async () => {
+      if (!selectedWorker) return;
+
+      try {
+        const res = await API.get(
+          `/api/attendance/status/${selectedWorker}`
+        );
+        setStatus(res.data.status);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStatus();
   }, [selectedWorker]);
 
   /* ===== Check In ===== */
   const handleCheckIn = async () => {
     try {
-      await axios.post(`${API}/api/attendance/checkin`, {
+      await API.post("/api/attendance/checkin", {
         workerId: selectedWorker
       });
 
       setMessage("Check-In Successful ✅");
       setStatus("checked_in");
+
     } catch (err) {
-      setMessage("Check-In failed");
+      setMessage(
+        err.response?.data?.message || "Check-In failed"
+      );
     }
   };
 
   /* ===== Check Out ===== */
   const handleCheckOut = async () => {
     try {
-      const res = await axios.post(`${API}/api/attendance/checkout`, {
+      const res = await API.post("/api/attendance/checkout", {
         workerId: selectedWorker
       });
 
@@ -62,14 +77,16 @@ function Attendance({ dark }) {
       );
 
       setStatus("completed");
+
     } catch (err) {
-      setMessage(err.response?.data?.message || "Checkout failed");
+      setMessage(
+        err.response?.data?.message || "Checkout failed"
+      );
     }
   };
 
   return (
     <>
-      {/* ===== Title ===== */}
       <Typography
         sx={{
           fontSize: { xs: "1.3rem", md: "1.7rem" },
@@ -89,7 +106,6 @@ function Attendance({ dark }) {
           boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
         }}
       >
-        {/* ===== Worker Select ===== */}
         <FormControl fullWidth size="small">
           <Select
             value={selectedWorker}
@@ -105,7 +121,6 @@ function Attendance({ dark }) {
           </Select>
         </FormControl>
 
-        {/* ===== Buttons ===== */}
         <Box
           sx={{
             mt: 2,
@@ -136,15 +151,26 @@ function Attendance({ dark }) {
           )}
         </Box>
 
-        {/* ===== Status ===== */}
         {status === "completed" && (
-          <Typography sx={{ mt: 2, fontWeight: 500, color: "#16a34a" }}>
+          <Typography
+            sx={{
+              mt: 2,
+              fontWeight: 500,
+              color: "#16a34a"
+            }}
+          >
             Attendance Completed ✔
           </Typography>
         )}
 
         {message && (
-          <Typography sx={{ mt: 1.5, fontSize: "0.9rem", color: "#64748b" }}>
+          <Typography
+            sx={{
+              mt: 1.5,
+              fontSize: "0.9rem",
+              color: "#64748b"
+            }}
+          >
             {message}
           </Typography>
         )}
