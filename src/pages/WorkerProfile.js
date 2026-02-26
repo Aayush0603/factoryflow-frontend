@@ -23,18 +23,19 @@ function WorkerProfile({ dark }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  // ✅ FIXED: fetchProfile moved inside useEffect
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await API.get(`/api/workers/profile/${id}`);
+        setData(res.data);
+      } catch (error) {
+        console.error("Worker profile error:", error);
+      }
+    };
+
     fetchProfile();
   }, [id]);
-
-  const fetchProfile = async () => {
-    try {
-      const res = await API.get(`/api/workers/profile/${id}`);
-      setData(res.data);
-    } catch (error) {
-      console.error("Worker profile error:", error);
-    }
-  };
 
   if (!data) {
     return <Typography>Loading profile...</Typography>;
@@ -44,6 +45,7 @@ function WorkerProfile({ dark }) {
 
   return (
     <>
+      {/* ===== Profile Card ===== */}
       <Card
         sx={{
           mb: 2,
@@ -70,7 +72,7 @@ function WorkerProfile({ dark }) {
               fontSize: 28
             }}
           >
-            {worker.name.charAt(0)}
+            {worker?.name?.charAt(0)}
           </Avatar>
 
           <Box>
@@ -98,6 +100,7 @@ function WorkerProfile({ dark }) {
         </Box>
       </Card>
 
+      {/* ===== Stats ===== */}
       <Grid container spacing={2} mb={2}>
         <Grid item xs={12} md={6}>
           <Card
@@ -111,6 +114,7 @@ function WorkerProfile({ dark }) {
             <Typography variant="body2" color="text.secondary">
               Total Days Worked
             </Typography>
+
             <Typography
               sx={{
                 fontSize: { xs: "1.6rem", md: "1.8rem" },
@@ -135,6 +139,7 @@ function WorkerProfile({ dark }) {
             <Typography variant="body2" color="text.secondary">
               Total Hours Worked
             </Typography>
+
             <Typography
               sx={{
                 fontSize: { xs: "1.6rem", md: "1.8rem" },
@@ -148,6 +153,7 @@ function WorkerProfile({ dark }) {
         </Grid>
       </Grid>
 
+      {/* ===== Attendance History ===== */}
       <Card
         sx={{
           p: 2,
@@ -166,6 +172,7 @@ function WorkerProfile({ dark }) {
           Attendance History
         </Typography>
 
+        {/* Desktop Table */}
         {!isMobile && (
           <Table size="small">
             <TableHead>
@@ -176,6 +183,7 @@ function WorkerProfile({ dark }) {
                 <TableCell><b>Hours</b></TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {attendance.map((a, i) => (
                 <TableRow key={i}>
@@ -189,6 +197,7 @@ function WorkerProfile({ dark }) {
           </Table>
         )}
 
+        {/* Mobile Cards */}
         {isMobile &&
           attendance.map((a, i) => (
             <Card
