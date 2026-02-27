@@ -1,15 +1,19 @@
 import React, { useState } from "react";
-import API from "../api";   // ✅ use centralized API
+import API from "../api";
 import {
   Box,
   Card,
   CardContent,
   Typography,
   TextField,
-  Button
+  Button,
+  Link
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,7 +28,7 @@ function Login() {
         password
       });
 
-      // Save token + user
+      // Save session
       sessionStorage.setItem("loggedIn", "true");
       sessionStorage.setItem(
         "user",
@@ -43,7 +47,7 @@ function Login() {
         return;
       }
 
-      window.location.href = "/";
+      navigate("/");
 
     } catch (err) {
       alert(
@@ -68,21 +72,22 @@ function Login() {
       <Card
         sx={{
           width: "100%",
-          maxWidth: 360,
+          maxWidth: 380,
           borderRadius: 3,
-          boxShadow: "0 10px 28px rgba(0,0,0,0.25)"
+          boxShadow: "0 15px 40px rgba(0,0,0,0.25)"
         }}
       >
-        <CardContent sx={{ p: 3 }}>
+        <CardContent sx={{ p: 4 }}>
+          {/* Title */}
           <Typography
             sx={{
-              fontSize: "1.6rem",
+              fontSize: "1.8rem",
               fontWeight: "bold",
               textAlign: "center",
-              mb: 2.5
+              mb: 1
             }}
           >
-            FactoryFlow
+            FactoryFlow ERP
           </Typography>
 
           <Typography
@@ -90,45 +95,67 @@ function Login() {
               textAlign: "center",
               fontSize: "0.9rem",
               color: "#64748b",
-              mb: 2
+              mb: 3
             }}
           >
-            Sign in to continue
+            Admin Login
           </Typography>
 
-          <TextField
-            fullWidth
-            size="small"
-            label="Email"
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          {/* Form */}
+          <form onSubmit={handleLogin}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Email"
+              margin="normal"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-          <TextField
-            fullWidth
-            size="small"
-            label="Password"
-            type="password"
-            margin="normal"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            <TextField
+              fullWidth
+              size="small"
+              label="Password"
+              type="password"
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{
-              mt: 2.5,
-              py: 1,
-              fontWeight: 600,
-              textTransform: "none"
-            }}
-            onClick={handleLogin}
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </Button>
+            {/* Forgot Password */}
+            <Typography
+              sx={{
+                textAlign: "right",
+                fontSize: "0.85rem",
+                mt: 1
+              }}
+            >
+              <Link
+                component="button"
+                underline="hover"
+                onClick={() => navigate("/forgot-password")}
+              >
+                Forgot Password?
+              </Link>
+            </Typography>
+
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{
+                mt: 3,
+                py: 1.2,
+                fontWeight: 600,
+                textTransform: "none"
+              }}
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </Box>

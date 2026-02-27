@@ -30,6 +30,8 @@ import RawMaterials from "./pages/RawMaterials";
 import Purchases from "./pages/Purchases";
 import Suppliers from "./pages/Suppliers";
 import Inquiries from "./pages/Inquiries";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const [dark, setDark] = useState(false);
@@ -173,6 +175,8 @@ function MainLayout({ dark, setDark, user }) {
           <Route path="/add-production" element={<AddProductionEntry />} />
           <Route path="/raw-materials" element={<RawMaterials />} />
           <Route path="/purchases" element={<Purchases />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           {/* Admin Only Routes */}
           <Route
