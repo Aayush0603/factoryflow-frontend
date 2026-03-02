@@ -32,6 +32,7 @@ import Suppliers from "./pages/Suppliers";
 import Inquiries from "./pages/Inquiries";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   const [dark, setDark] = useState(false);
@@ -177,6 +178,7 @@ function MainLayout({ dark, setDark, user }) {
           <Route path="/purchases" element={<Purchases />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/change-password" element={<ChangePassword />} />
 
           {/* Admin Only Routes */}
           <Route

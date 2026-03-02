@@ -10,8 +10,12 @@ import {
 } from "@mui/material";
 import API from "../api";
 
-function ForgotPassword() {
-  const [email, setEmail] = useState("");
+function ChangePassword() {
+  const [form, setForm] = useState({
+    currentPassword: "",
+    newPassword: ""
+  });
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -23,9 +27,15 @@ function ForgotPassword() {
     setError(null);
 
     try {
-      await API.post("/forgot-password", { email });
-      setMessage("Reset link sent to your email.");
-      setEmail("");
+      await API.put("/change-password", form);
+
+      setMessage("Password changed successfully.");
+
+      sessionStorage.clear();
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+
     } catch (err) {
       setError(err.response?.data?.message || "Server error");
     }
@@ -38,7 +48,7 @@ function ForgotPassword() {
       <Card sx={cardStyle}>
         <CardContent>
           <Typography variant="h5" mb={2}>
-            ERP Forgot Password
+            Change ERP Password
           </Typography>
 
           {message && <Alert severity="success">{message}</Alert>}
@@ -47,10 +57,25 @@ function ForgotPassword() {
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="Admin Email"
+              label="Current Password"
+              type="password"
               margin="normal"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={form.currentPassword}
+              onChange={(e) =>
+                setForm({ ...form, currentPassword: e.target.value })
+              }
+              required
+            />
+
+            <TextField
+              fullWidth
+              label="New Password"
+              type="password"
+              margin="normal"
+              value={form.newPassword}
+              onChange={(e) =>
+                setForm({ ...form, newPassword: e.target.value })
+              }
               required
             />
 
@@ -61,7 +86,7 @@ function ForgotPassword() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Sending..." : "Send Reset Link"}
+              {loading ? "Updating..." : "Update Password"}
             </Button>
           </form>
         </CardContent>
@@ -84,4 +109,4 @@ const cardStyle = {
   boxShadow: "0 15px 40px rgba(0,0,0,0.25)"
 };
 
-export default ForgotPassword;
+export default ChangePassword;
