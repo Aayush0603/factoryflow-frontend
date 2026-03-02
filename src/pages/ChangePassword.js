@@ -27,7 +27,7 @@ function ChangePassword() {
     setError(null);
 
     try {
-      await API.put("/change-password", form);
+      await API.put("/auth/change-password", form);
 
       setMessage("Password changed successfully.");
 

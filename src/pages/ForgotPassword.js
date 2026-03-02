@@ -23,7 +23,7 @@ function ForgotPassword() {
     setError(null);
 
     try {
-      await API.post("/forgot-password", { email });
+      await API.post("/auth/forgot-password", { email });
       setMessage("Reset link sent to your email.");
       setEmail("");
     } catch (err) {
