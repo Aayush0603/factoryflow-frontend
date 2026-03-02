@@ -20,7 +20,7 @@ function Attendance({ dark }) {
   useEffect(() => {
     const fetchWorkers = async () => {
       try {
-        const res = await API.get("/api/workers");
+        const res = await API.get("/workers");
         setWorkers(res.data);
       } catch (error) {
         console.error(error);
@@ -37,7 +37,7 @@ function Attendance({ dark }) {
 
       try {
         const res = await API.get(
-          `/api/attendance/status/${selectedWorker}`
+          `/attendance/status/${selectedWorker}`
         );
         setStatus(res.data.status);
       } catch (error) {
@@ -51,7 +51,7 @@ function Attendance({ dark }) {
   /* ===== Check In ===== */
   const handleCheckIn = async () => {
     try {
-      await API.post("/api/attendance/checkin", {
+      await API.post("/attendance/checkin", {
         workerId: selectedWorker
       });
 
@@ -68,7 +68,7 @@ function Attendance({ dark }) {
   /* ===== Check Out ===== */
   const handleCheckOut = async () => {
     try {
-      const res = await API.post("/api/attendance/checkout", {
+      const res = await API.post("/attendance/checkout", {
         workerId: selectedWorker
       });
 

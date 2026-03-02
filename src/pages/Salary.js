@@ -26,7 +26,7 @@ function Salary({ dark }) {
 
   const fetchSalary = async () => {
     try {
-      const res = await API.get(`/api/salary/${month}`);
+      const res = await API.get(`/salary/${month}`);
       setData(res.data);
     } catch (error) {
       console.error("Salary fetch error:", error);
@@ -36,7 +36,7 @@ function Salary({ dark }) {
 
   const downloadReport = async () => {
     try {
-      const res = await API.get(`/api/salary-report/${month}`, {
+      const res = await API.get(`/salary-report/${month}`, {
         responseType: "blob"
       });
 

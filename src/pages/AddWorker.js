@@ -20,7 +20,7 @@ function AddWorker() {
 
   const handleSubmit = async () => {
     try {
-      await API.post("/api/workers", {
+      await API.post("/workers", {
         ...worker,
         salaryAmount: Number(worker.salaryAmount)
       });

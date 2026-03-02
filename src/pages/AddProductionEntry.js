@@ -31,9 +31,9 @@ const AddProductionEntry = () => {
   const fetchData = async () => {
     try {
       const [productsRes, machinesRes, rawRes] = await Promise.all([
-        API.get("/api/products"),
-        API.get("/api/machines"),
-        API.get("/api/raw-materials"),
+        API.get("/products"),
+        API.get("/machines"),
+        API.get("/raw-materials"),
       ]);
 
       setProducts(productsRes.data);
@@ -47,7 +47,7 @@ const AddProductionEntry = () => {
 
   const handleSubmit = async () => {
     try {
-      await API.post("/api/production", {
+      await API.post("/production", {
         ...form,
         quantityProduced: Number(form.quantityProduced),
         rawMaterialUsedKg: Number(form.rawMaterialUsedKg),

@@ -37,7 +37,7 @@ function Dashboard({ dark }) {
 
   const fetchDashboard = async () => {
     try {
-      const res = await API.get("/api/dashboard");
+      const res = await API.get("/dashboard");
       setStats(res.data);
     } catch (error) {
       console.error("Dashboard error:", error);

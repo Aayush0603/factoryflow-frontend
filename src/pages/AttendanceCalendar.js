@@ -32,7 +32,7 @@ function AttendanceCalendar({ dark }) {
 
   const fetchAttendanceHistory = async () => {
     try {
-      const res = await API.get("/api/attendance/history");
+      const res = await API.get("/attendance/history");
 
       setRecords(res.data);
 

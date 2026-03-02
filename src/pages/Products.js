@@ -27,7 +27,7 @@ const Products = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await API.get("/api/products");
+      const res = await API.get("/products");
       setProducts(res.data);
     } catch (error) {
       console.error("Fetch products error:", error);
@@ -36,7 +36,7 @@ const Products = () => {
 
   const handleSubmit = async () => {
     try {
-      await API.post("/api/products", {
+      await API.post("/products", {
         ...form,
         standardOutputPerHour: Number(form.standardOutputPerHour),
       });
@@ -57,7 +57,7 @@ const Products = () => {
 
   const handleDelete = async (id) => {
     try {
-      await API.delete(`/api/products/${id}`);
+      await API.delete(`/products/${id}`);
       fetchProducts();
     } catch (error) {
       console.error("Delete product error:", error);

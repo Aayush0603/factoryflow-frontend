@@ -41,10 +41,10 @@ function Analytics({ dark }) {
         otRes,
         alertRes
       ] = await Promise.all([
-        API.get("/api/analytics/monthly-attendance"),
-        API.get("/api/analytics/top-workers"),
-        API.get("/api/analytics/overtime-cost"),
-        API.get("/api/analytics/absent-alert")
+        API.get("/analytics/monthly-attendance"),
+        API.get("/analytics/top-workers"),
+        API.get("/analytics/overtime-cost"),
+        API.get("/analytics/absent-alert")
       ]);
 
       setMonthly(monthlyRes.data);

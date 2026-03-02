@@ -11,7 +11,7 @@ function Inquiries() {
   const fetchInquiries = async () => {
     try {
       // ✅ Adjust this route if needed based on backend
-      const res = await API.get("/api/public/admin/inquiries");
+      const res = await API.get("/public/admin/inquiries");
 
       setInquiries(res.data);
     } catch (error) {

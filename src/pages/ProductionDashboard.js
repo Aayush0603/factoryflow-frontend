@@ -29,14 +29,14 @@ const ProductionDashboard = () => {
         spcRes,
         predictionRes
       ] = await Promise.all([
-        API.get("/api/production/summary/today"),
-        API.get("/api/production/analytics/machine-efficiency"),
-        API.get("/api/production/analytics/product-efficiency"),
-        API.get("/api/production/analytics/machine-efficiency-ratio"),
-        API.get("/api/production/analytics/waste-percentage"),
-        API.get("/api/production/analytics/anomalies"),
-        API.get("/api/production/analytics/spc-efficiency"),
-        API.get("/api/production/analytics/predict-efficiency")
+        API.get("/production/summary/today"),
+        API.get("/production/analytics/machine-efficiency"),
+        API.get("/production/analytics/product-efficiency"),
+        API.get("/production/analytics/machine-efficiency-ratio"),
+        API.get("/production/analytics/waste-percentage"),
+        API.get("/production/analytics/anomalies"),
+        API.get("/production/analytics/spc-efficiency"),
+        API.get("/production/analytics/predict-efficiency")
       ]);
 
       setSummary(summaryRes.data);

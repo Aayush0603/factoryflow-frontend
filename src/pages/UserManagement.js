@@ -30,7 +30,7 @@ function UserManagement({ dark }) {
   // ✅ Fetch users (Protected route)
   const fetchUsers = async () => {
     try {
-      const res = await API.get("/api/auth/users");
+      const res = await API.get("/auth/users");
       setUsers(res.data);
     } catch (error) {
       console.error(error);
@@ -45,7 +45,7 @@ function UserManagement({ dark }) {
   // ✅ Create user (using unified signup route)
   const createUser = async () => {
     try {
-      await API.post("/api/auth/signup", form);
+      await API.post("/auth/signup", form);
 
       setForm({
         name: "",
@@ -63,7 +63,7 @@ function UserManagement({ dark }) {
   // ✅ Delete user
   const deleteUser = async (id) => {
     try {
-      await API.delete(`/api/auth/users/${id}`);
+      await API.delete(`/auth/users/${id}`);
       fetchUsers();
     } catch (err) {
       alert("Failed to delete user");

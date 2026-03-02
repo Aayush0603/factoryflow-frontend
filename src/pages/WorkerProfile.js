@@ -27,7 +27,7 @@ function WorkerProfile({ dark }) {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await API.get(`/api/workers/profile/${id}`);
+        const res = await API.get(`/workers/profile/${id}`);
         setData(res.data);
       } catch (error) {
         console.error("Worker profile error:", error);

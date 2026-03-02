@@ -25,7 +25,7 @@ const Machines = () => {
 
   const fetchMachines = async () => {
     try {
-      const res = await API.get("/api/machines");
+      const res = await API.get("/machines");
       setMachines(res.data);
     } catch (error) {
       console.error("Fetch machines error:", error);
@@ -38,7 +38,7 @@ const Machines = () => {
 
   const handleSubmit = async () => {
     try {
-      await API.post("/api/machines", {
+      await API.post("/machines", {
         ...form,
         capacityPerHour: Number(form.capacityPerHour),
       });
@@ -54,7 +54,7 @@ const Machines = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await API.patch(`/api/machines/${id}`, { status });
+      await API.patch(`/machines/${id}`, { status });
       fetchMachines();
     } catch (error) {
       console.error("Update status error:", error);

@@ -24,7 +24,7 @@ const Suppliers = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const res = await API.get("/api/suppliers");
+      const res = await API.get("/suppliers");
       setSuppliers(res.data);
     } catch (error) {
       console.error("Fetch suppliers error:", error);
@@ -38,7 +38,7 @@ const Suppliers = () => {
     }
 
     try {
-      await API.post("/api/suppliers", form);
+      await API.post("/suppliers", form);
 
       setForm({
         companyName: "",

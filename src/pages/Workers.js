@@ -32,7 +32,7 @@ function Workers({ dark }) {
 
   const fetchWorkers = async () => {
     try {
-      const res = await API.get("/api/workers");
+      const res = await API.get("/workers");
       const formatted = res.data.map(w => ({ ...w, id: w._id }));
       setWorkers(formatted);
     } catch (error) {
@@ -42,7 +42,7 @@ function Workers({ dark }) {
 
   const deleteWorker = async (id) => {
     try {
-      await API.delete(`/api/workers/${id}`);
+      await API.delete(`/workers/${id}`);
       fetchWorkers();
     } catch (error) {
       console.error("Delete worker error:", error);
@@ -52,7 +52,7 @@ function Workers({ dark }) {
 
   const updateWorker = async () => {
     try {
-      await API.put(`/api/workers/${editingWorker._id}`, {
+      await API.put(`/workers/${editingWorker._id}`, {
         ...editingWorker,
         salaryAmount: Number(editingWorker.salaryAmount)
       });

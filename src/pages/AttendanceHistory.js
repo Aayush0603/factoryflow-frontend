@@ -25,7 +25,7 @@ function AttendanceHistory({ dark }) {
 
   const fetchHistory = async () => {
     try {
-      const res = await API.get("/api/attendance/history");
+      const res = await API.get("/attendance/history");
       setData(res.data);
     } catch (error) {
       console.error("Attendance history error:", error);

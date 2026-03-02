@@ -24,7 +24,7 @@ const RawMaterials = () => {
 
   const fetchMaterials = async () => {
     try {
-      const res = await API.get("/api/raw-materials");
+      const res = await API.get("/raw-materials");
       setMaterials(res.data);
     } catch (error) {
       console.error("Fetch raw materials error:", error);
@@ -42,7 +42,7 @@ const RawMaterials = () => {
     e.preventDefault();
 
     try {
-      await API.post("/api/raw-materials", {
+      await API.post("/raw-materials", {
         ...form,
         currentStock: Number(form.currentStock),
         minimumStock: Number(form.minimumStock),

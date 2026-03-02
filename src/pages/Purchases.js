@@ -28,8 +28,8 @@ const Purchases = () => {
   const fetchInitialData = async () => {
     try {
       const [supplierRes, rawMaterialRes] = await Promise.all([
-        API.get("/api/suppliers"),
-        API.get("/api/raw-materials")
+        API.get("/suppliers"),
+        API.get("/raw-materials")
       ]);
 
       setSuppliers(supplierRes.data);
@@ -47,7 +47,7 @@ const Purchases = () => {
     }
 
     try {
-      await API.post("/api/purchases", {
+      await API.post("/purchases", {
         ...form,
         quantity: Number(form.quantity),
         pricePerUnit: Number(form.pricePerUnit)

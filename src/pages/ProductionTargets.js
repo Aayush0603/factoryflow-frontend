@@ -27,8 +27,8 @@ const ProductionTargets = () => {
   const fetchInitialData = async () => {
     try {
       const [productRes, targetRes] = await Promise.all([
-        API.get("/api/products"),
-        API.get("/api/targets/achievement")
+        API.get("/products"),
+        API.get("/targets/achievement")
       ]);
 
       setProducts(productRes.data);
@@ -41,7 +41,7 @@ const ProductionTargets = () => {
 
   const fetchTargets = async () => {
     try {
-      const res = await API.get("/api/targets/achievement");
+      const res = await API.get("/targets/achievement");
       setTargets(res.data);
     } catch (error) {
       console.error("Fetch targets error:", error);
@@ -50,7 +50,7 @@ const ProductionTargets = () => {
 
   const handleSubmit = async () => {
     try {
-      await API.post("/api/targets", {
+      await API.post("/targets", {
         ...form,
         targetQuantity: Number(form.targetQuantity)
       });
