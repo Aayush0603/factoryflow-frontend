@@ -41,9 +41,13 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
 
-        {/* Protected Area */}
+        {/* ================= PUBLIC ROUTES ================= */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+        {/* ================= PROTECTED ERP AREA ================= */}
         <Route
           path="*"
           element={
@@ -52,15 +56,19 @@ function App() {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </Router>
   );
 }
 
+/* ================= MAIN LAYOUT ================= */
+
 function MainLayout({ dark, setDark, user }) {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
+
+      {/* ================= SIDEBAR ================= */}
       <div
         style={{
           width: "220px",
@@ -75,7 +83,7 @@ function MainLayout({ dark, setDark, user }) {
         <h2 style={{ fontSize: "18px" }}>FactoryFlow</h2>
 
         <div style={{ fontSize: "12px" }}>
-          Welcome, <b>{user?.username}</b>
+          Welcome, <b>{user?.name}</b>
           <br />
           <span
             style={{
@@ -118,6 +126,7 @@ function MainLayout({ dark, setDark, user }) {
             <NavItem to="/users" label="Users" />
             <NavItem to="/suppliers" label="Suppliers" />
             <NavItem to="/inquiries" label="Inquiries" />
+            <NavItem to="/change-password" label="Change Password" />
           </>
         )}
 
@@ -153,7 +162,7 @@ function MainLayout({ dark, setDark, user }) {
         </button>
       </div>
 
-      {/* Main Content */}
+      {/* ================= MAIN CONTENT ================= */}
       <div
         style={{
           flex: 1,
@@ -176,11 +185,8 @@ function MainLayout({ dark, setDark, user }) {
           <Route path="/add-production" element={<AddProductionEntry />} />
           <Route path="/raw-materials" element={<RawMaterials />} />
           <Route path="/purchases" element={<Purchases />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/change-password" element={<ChangePassword />} />
 
-          {/* Admin Only Routes */}
+          {/* Admin Only */}
           <Route
             path="/salary"
             element={
@@ -226,12 +232,23 @@ function MainLayout({ dark, setDark, user }) {
             }
           />
 
+          <Route
+            path="/change-password"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <ChangePassword />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/worker/:id" element={<WorkerProfile dark={dark} />} />
         </Routes>
       </div>
     </div>
   );
 }
+
+/* ================= NAV ITEM ================= */
 
 function NavItem({ to, label }) {
   const location = useLocation();

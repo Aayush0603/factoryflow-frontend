@@ -14,24 +14,25 @@ function Navbar() {
 
   return (
     <div style={navStyle}>
-      {/* Left */}
+      {/* Left Section */}
       <div>
-        <Link to="/" style={linkStyle}>FactoryFlow ERP</Link>
+        <Link to="/" style={brandStyle}>
+          FactoryFlow ERP
+        </Link>
       </div>
 
-      {/* Right */}
+      {/* Right Section */}
       <div style={{ display: "flex", alignItems: "center" }}>
         {token ? (
           <>
-            <span style={{ marginRight: "15px" }}>
-              Hi, <strong>{user?.name}</strong>
+            <span style={{ marginRight: "20px" }}>
+              Hi, <strong>{user?.name || "Admin"}</strong>
             </span>
 
-            {user?.role === "admin" && (
-              <Link to="/change-password" style={linkStyle}>
-                Change Password
-              </Link>
-            )}
+            {/* Change Password (Visible When Logged In) */}
+            <Link to="/change-password" style={linkStyle}>
+              Change Password
+            </Link>
 
             <button onClick={handleLogout} style={btnStyle}>
               Logout
@@ -47,13 +48,22 @@ function Navbar() {
   );
 }
 
+/* ================= STYLES ================= */
+
 const navStyle = {
   display: "flex",
   justifyContent: "space-between",
+  alignItems: "center",
   padding: "15px 40px",
   background: "#111827",
+  color: "white"
+};
+
+const brandStyle = {
   color: "white",
-  alignItems: "center"
+  textDecoration: "none",
+  fontSize: "18px",
+  fontWeight: "bold"
 };
 
 const linkStyle = {
