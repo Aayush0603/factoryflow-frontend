@@ -23,10 +23,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await API.post("/api/auth/login", {
-        email,
-        password
-      });
+      const res = await API.post("/login", { email, password });
 
       // Save session
       sessionStorage.setItem("loggedIn", "true");
