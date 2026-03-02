@@ -7,7 +7,7 @@ import {
   Navigate,
   useLocation
 } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -36,7 +36,14 @@ import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   const [dark, setDark] = useState(false);
-  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const [user, setUser] = useState(
+  JSON.parse(sessionStorage.getItem("user") || "{}")
+);
+
+useEffect(() => {
+  const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}");
+  setUser(storedUser);
+}, []);
 
   return (
     <Router>
